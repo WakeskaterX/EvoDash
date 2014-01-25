@@ -78,6 +78,9 @@ public class playerControl : MonoBehaviour {
 	public PlayerData data = new PlayerData();
 
 	public bool facing_right		= true;
+	public bool stunned				= false;
+	public float stun_time			= 0f;
+	public float stun_dur			= 5f;
 
 	Animator anim;
 
@@ -89,6 +92,8 @@ public class playerControl : MonoBehaviour {
 	public float jump_inc			= .5f;
 	public float dash_cool_decay	= .05f;
 	public float dash_cool_inc		= .3f;
+	public float end_reg_decay		= .02f;
+	public float end_reg_inc		= .03f;
 
 
 
@@ -104,6 +109,10 @@ public class playerControl : MonoBehaviour {
 			MoveWallGrab ();
 			MoveJump ();
 		}
+
+		EndureRegen();
+		EndureMin ();
+		EndureReset();
 
 		MoveDash();
 		anim.SetBool ("dashing",dashing);
@@ -122,10 +131,11 @@ public class playerControl : MonoBehaviour {
 			facing_right = false;
 		}
 
-
+		if (endure < endure_max/2 && !stunned){endure_regen += end_reg_inc;}
 
 		DecayValues();
 		CapValues();
+		data.PlayerCurrentStats (jump_force,dash_len,speed_top);
 	}
 
 	void FixedUpdate () {
@@ -140,12 +150,32 @@ public class playerControl : MonoBehaviour {
 	}
 
 	void OnGUI(){
-		DevInfoGraphics();
+		//DevInfoGraphics();
+	}
+
+	void EndureRegen(){
+		if (endure < endure_max){
+			endure += endure_regen * Time.deltaTime;
+		}else endure = endure_max;
+
+		if (endure > endure_max) endure = endure_max;
+	}
+
+	void EndureReset(){
+		if (Time.time > stun_time && stunned) stunned = false;
+	}
+
+	void EndureMin(){
+		if (endure < 0) {
+			endure = 0;
+			stunned = true;
+			stun_time = Time.time + stun_dur;
+		}
 	}
 
 	void MoveWallGrab(){
 
-		if (!grounded){
+		if (!grounded && !stunned){
 			if (Physics2D.Linecast (transform.position,wall_check_right.position,is_ground ) ||Physics2D.Linecast (transform.position,wall_check_left.position,is_ground )){
 				if (Input.GetAxis ("Horizontal") < 0){
 					wallgrabbing = true;
@@ -160,6 +190,7 @@ public class playerControl : MonoBehaviour {
 
 		if (wallgrabbing)
 		{
+			endure -= wall_grab_cost * Time.deltaTime;
 			if (Mathf.Abs (rigidbody2D.velocity.y) > wall_slide_speed)
 			{
 				rigidbody2D.velocity = new Vector2(0f,wall_slide_speed);
@@ -179,15 +210,19 @@ public class playerControl : MonoBehaviour {
 
 		dash_cool += dash_cool_decay * Time.deltaTime;
 		if (dash_cool > dash_cool_max) dash_cool = dash_cool_max;
+
+		endure_regen -= end_reg_decay * Time.deltaTime;
+		if (endure_regen < endure_regen_min) endure_regen = endure_regen_min;
 	}
 	void CapValues(){
 		speed_top = Mathf.Min(speed_top,speed_max);
 		jump_force = Mathf.Min (jump_force,jump_force_max);
 		dash_cool = Mathf.Max(dash_cool,dash_cool_min);
+		endure_regen = Mathf.Min (endure_regen,endure_regen_max);
 	}
 
 	void MoveDash(){
-	if (grounded || can_airdash){
+	if ((grounded || can_airdash) && !stunned){
 		if (!tap_right && Input.GetAxis ("Horizontal") > 0 && tap_last == 0) {
 			tap_time = Time.time + tap_cool;
 			tap_right = true;
@@ -195,6 +230,7 @@ public class playerControl : MonoBehaviour {
 		}
 		else if (tap_right && Input.GetAxis ("Horizontal") > 0 && tap_last == 0 && !dashing && can_dash) {
 			dashing = true;
+			endure -= dash_cost;
 			dash_cool -= dash_cool_inc;
 			data.PlayerDashed();
 			rigidbody2D.velocity = new Vector2 (dash_speed,0);
@@ -212,6 +248,7 @@ public class playerControl : MonoBehaviour {
 		}
 		else if (tap_left && Input.GetAxis ("Horizontal") < 0 && tap_last == 0 && !dashing && can_dash) {
 			dashing = true;
+			endure -= dash_cost;
 			dash_cool -= dash_cool_inc;
 			data.PlayerDashed();
 			rigidbody2D.velocity = new Vector2 (-dash_speed,0);
@@ -251,10 +288,11 @@ public class playerControl : MonoBehaviour {
 		float h = Input.GetAxis ("Horizontal");
 		float velX = 0f;
 
-		if (Input.GetButton ("Sprint") && can_sprint){
+		if (Input.GetButton ("Sprint") && can_sprint && !stunned){
 			data.AddRunningTime(Time.deltaTime);
 			sprint_mult = sprint_max;
 			speed_top += speed_inc * Time.deltaTime;
+			endure -= sprint_cost*Time.deltaTime;
 			//Debug.Log ("Sprinting");
 		} else sprint_mult = 1f;
 
@@ -287,23 +325,25 @@ public class playerControl : MonoBehaviour {
 				can_jump = true;
 			}
 
-		if (grounded && jump && can_jump){
+			if (grounded && jump && can_jump && !stunned){
 			//rigidbody2D.AddForce(Vector2.up * jump_force * jForce);
 				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x,jump_force * jForce );
+				endure -= jump_cost;
 				jump_force += jump_inc;
 			grounded = false;
 			if (!can_dub_jump) can_jump = false;
 			}
 		else
-			if (!grounded && jump && can_jump){
+			if (!grounded && jump && can_jump && !stunned){
 				can_jump = false;
 				jump_force += jump_inc;
+				endure -= dub_jump_cost;
 				//rigidbody2D.AddForce(Vector2.up * jump_force * jForce);
 				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x,jump_force * jForce );
 			}
 		}
 		else{
-			if (jump && can_wall_jump)
+			if (jump && can_wall_jump && !stunned)
 			{
 				float jvX, jvY;
 				Vector2 jVect;
@@ -313,6 +353,7 @@ public class playerControl : MonoBehaviour {
 				jVect.Normalize();
 				data.PlayerJumped();
 				wallgrabbing = false;
+				endure -= jump_cost;
 				jump_force += jump_inc;
 				//rigidbody2D.velocity = jVect * jump_force * jFWall ;
 				rigidbody2D.AddForce (jVect * jump_force * jFWall);
