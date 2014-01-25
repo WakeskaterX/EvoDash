@@ -6,6 +6,7 @@ public class MakeNextChunk : MonoBehaviour {
 	public GameObject platform;
 	public GameObject nextTrigger;
 	public bool madeNextChunk = false;
+	public Vector3 startLocation;
 
 	// Use this for initialization
 	void Start () {
@@ -25,17 +26,22 @@ public class MakeNextChunk : MonoBehaviour {
 		if (madeNextChunk)
 						return;
 		Vector3 curLocation = gameObject.transform.position;
-		curLocation.x += 1.28f * 5f;
-		curLocation.y -= 1f * 5f;
+		Vector3 triggerLoc = Vector3.zero;
+		Instantiate (platform, new Vector3(curLocation.x, curLocation.y, 0f), Quaternion.identity);
 		for (int i = 0; i < 10; i++)
 		{
-			curLocation.x += 1.28f;
-			curLocation.y -=1;
+			curLocation.x +=1.5f;
 			Instantiate (platform, new Vector3(curLocation.x, curLocation.y, 0f), Quaternion.identity);
+			if (i == 5) 
+			{
+				triggerLoc = curLocation;
+				triggerLoc.y += 2f;
+			}
 		}
-		GameObject nTrigger = (GameObject) Instantiate (nextTrigger, new Vector3(curLocation.x-1.28f*5f, gameObject.transform.position.y-10f, 1), gameObject.transform.rotation);
+		GameObject nTrigger = (GameObject) Instantiate (nextTrigger, triggerLoc, gameObject.transform.rotation);
 		nTrigger.GetComponent<MakeNextChunk> ().platform = platform;
 		nTrigger.GetComponent<MakeNextChunk> ().nextTrigger = nextTrigger;
+		nTrigger.GetComponent<MakeNextChunk> ().startLocation = curLocation;
 		madeNextChunk = true;
 		gameObject.GetComponent<SpriteRenderer> ().color = new Color (0, 0, 255);
 	}
