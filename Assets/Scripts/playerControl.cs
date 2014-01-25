@@ -86,7 +86,7 @@ public class playerControl : MonoBehaviour {
 
 
 	/************  Statistic Adjustment Variables  ************/
-	public float speed_decay		= .08f;								//decay in seconds
+	public float speed_decay		= .1f;								//decay in seconds
 	public float speed_inc			= .3f;								//time sprinting in seconds
 	public float jump_decay			= .1f;
 	public float jump_inc			= .5f;
@@ -94,6 +94,8 @@ public class playerControl : MonoBehaviour {
 	public float dash_cool_inc		= .3f;
 	public float end_reg_decay		= .02f;
 	public float end_reg_inc		= .03f;
+	public float dash_len_decay		= .03f;
+	public float dash_len_inc		= .08f;
 
 
 
@@ -131,7 +133,7 @@ public class playerControl : MonoBehaviour {
 			facing_right = false;
 		}
 
-		if (endure < endure_max/2 && !stunned){endure_regen += end_reg_inc;}
+		if (endure < endure_max/2 && !stunned){endure_regen += end_reg_inc * Time.deltaTime;}
 
 		DecayValues();
 		CapValues();
@@ -150,7 +152,7 @@ public class playerControl : MonoBehaviour {
 	}
 
 	void OnGUI(){
-		//DevInfoGraphics();
+		DevInfoGraphics();
 	}
 
 	void EndureRegen(){
@@ -213,12 +215,16 @@ public class playerControl : MonoBehaviour {
 
 		endure_regen -= end_reg_decay * Time.deltaTime;
 		if (endure_regen < endure_regen_min) endure_regen = endure_regen_min;
+
+		dash_len -= dash_len_decay * Time.deltaTime;
+		if (dash_len < dash_len_min) dash_len = dash_len_min;
 	}
 	void CapValues(){
 		speed_top = Mathf.Min(speed_top,speed_max);
 		jump_force = Mathf.Min (jump_force,jump_force_max);
 		dash_cool = Mathf.Max(dash_cool,dash_cool_min);
 		endure_regen = Mathf.Min (endure_regen,endure_regen_max);
+		dash_len = Mathf.Min (dash_len,dash_len_max);
 	}
 
 	void MoveDash(){
@@ -232,6 +238,7 @@ public class playerControl : MonoBehaviour {
 			dashing = true;
 			endure -= dash_cost;
 			dash_cool -= dash_cool_inc;
+				dash_len += dash_len_inc;
 			data.PlayerDashed();
 			rigidbody2D.velocity = new Vector2 (dash_speed,0);
 			dash_time = Time.time + dash_len;
@@ -254,6 +261,7 @@ public class playerControl : MonoBehaviour {
 			rigidbody2D.velocity = new Vector2 (-dash_speed,0);
 			dash_time = Time.time + dash_len;
 			dash_cool_time = Time.time + dash_cool;
+				dash_len += dash_len_inc;
 			rigidbody2D.gravityScale = 0f;
 			can_dash = false;
 			//Debug.Log("dash left");
@@ -368,8 +376,10 @@ public class playerControl : MonoBehaviour {
 
 	void DevInfoGraphics(){
 		GUI.contentColor = Color.black;
-		GUI.Label(new Rect(10,10,200,20),"Speed: "+speed_top);
-		GUI.Label(new Rect(10,40,200,20),"Jump: "+jump_force);
-		GUI.Label(new Rect(10,70,200,20),"Dash CD: "+dash_cool);
+		GUI.Label(new Rect(10,30,200,20),"Speed: "+speed_top);
+		GUI.Label(new Rect(10,60,200,20),"Jump: "+jump_force);
+		GUI.Label(new Rect(10,90,200,20),"Dash CD: "+dash_cool);
+		GUI.Label(new Rect(10,120,200,20),"Dash Len: "+dash_len);
+		GUI.Label(new Rect(10,150,200,20),"End Regen: "+endure_regen);
 	}
 }
