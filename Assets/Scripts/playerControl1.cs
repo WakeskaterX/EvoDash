@@ -75,6 +75,8 @@ public class playerControl1 : MonoBehaviour {
 
 	public float grav				= 2.5f;
 
+	public PlayerData data = new PlayerData();
+
 	void Start () {
 	
 	}
@@ -133,6 +135,7 @@ public class playerControl1 : MonoBehaviour {
 		}
 		else if (tap_right && Input.GetAxis ("Horizontal") > 0 && tap_last == 0 && !dashing && can_dash) {
 			dashing = true;
+			data.PlayerDashed();
 			rigidbody2D.velocity = new Vector2 (dash_speed,0);
 			dash_time = Time.time + dash_len;
 			dash_cool_time = Time.time + dash_cool;
@@ -148,6 +151,7 @@ public class playerControl1 : MonoBehaviour {
 		}
 		else if (tap_left && Input.GetAxis ("Horizontal") < 0 && tap_last == 0 && !dashing && can_dash) {
 			dashing = true;
+			data.PlayerDashed();
 			rigidbody2D.velocity = new Vector2 (-dash_speed,0);
 			dash_time = Time.time + dash_len;
 			dash_cool_time = Time.time + dash_cool;
@@ -186,6 +190,7 @@ public class playerControl1 : MonoBehaviour {
 		float velX = 0f;
 
 		if (Input.GetButton ("Sprint") && can_sprint){
+			data.AddRunningTime(Time.deltaTime);
 			sprint_mult = sprint_max;
 			Debug.Log ("Sprinting");
 		} else sprint_mult = 1f;
@@ -194,6 +199,9 @@ public class playerControl1 : MonoBehaviour {
 		if (grounded){
 			velX = Mathf.Sign (rigidbody2D.velocity.x) * (Mathf.Max (Mathf.Abs (rigidbody2D.velocity.x) - decel_force, 0));
 			rigidbody2D.velocity = new Vector2 (velX, rigidbody2D.velocity.y);
+		} else 
+		{
+			data.AddAirTime(Time.deltaTime);
 		}
 		
 		rigidbody2D.AddForce (Vector2.right * h * accel_force * sprint_mult);
@@ -238,7 +246,7 @@ public class playerControl1 : MonoBehaviour {
 				jvY = 1f;
 				jVect = new Vector2(jvX,jvY);
 				jVect.Normalize();
-
+				data.PlayerJumped();
 				wallgrabbing = false;
 
 				//rigidbody2D.velocity = jVect * jump_force * jFWall ;
