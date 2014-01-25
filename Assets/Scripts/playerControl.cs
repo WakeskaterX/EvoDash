@@ -6,7 +6,7 @@ public class playerControl : MonoBehaviour {
 	public float speed_min			= 2f;
 	public float speed_max			= 6f;
 	public float speed_curr			= 1f;
-	public float speed_top			= 25f;								//current top speed available
+	public float speed_top			= 2f;								//current top speed available
 	public float sprint_mult		= 1f;								//multiplies the speed_top
 	public float sprint_max			= 1.8f;
 
@@ -81,6 +81,19 @@ public class playerControl : MonoBehaviour {
 
 	Animator anim;
 
+
+	/************  Statistic Adjustment Variables  ************/
+	public float speed_decay		= .1f;								//decay in seconds
+	public float speed_inc			= .4f;								//time sprinting in seconds
+	public float jump_decay			= .1f;
+	public float jump_inc			= .5f;
+	public float dash_cool_decay	= .05f;
+	public float dash_cool_inc		= .5f;
+
+
+
+
+
 	void Start () {
 		anim = GetComponent<Animator>();
 	}
@@ -107,6 +120,8 @@ public class playerControl : MonoBehaviour {
 			transform.localScale = scale;
 			facing_right = false;
 		}
+
+		anim.SetBool ("dashing",dashing);
 	}
 
 	void FixedUpdate () {
@@ -116,7 +131,7 @@ public class playerControl : MonoBehaviour {
 		}
 
 		anim.SetFloat ("hSpeed",Mathf.Abs (rigidbody2D.velocity.x));
-	
+		anim.SetFloat ("vSpeed",rigidbody2D.velocity.y);
 	}
 
 	void MoveWallGrab(){
@@ -276,5 +291,7 @@ public class playerControl : MonoBehaviour {
 				if (!can_dub_jump)	can_jump = false;
 			}
 		}
+
+		anim.SetBool ("grounded",grounded);
 	}
 }
