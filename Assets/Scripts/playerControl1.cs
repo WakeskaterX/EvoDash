@@ -3,31 +3,31 @@ using System.Collections;
 
 public class playerControl1 : MonoBehaviour {
 
-	public float speed_min			= 6f;
-	public float speed_max			= 15f;
+	public float speed_min			= 2f;
+	public float speed_max			= 6f;
 	public float speed_curr			= 1f;
-	public float speed_top			= 15f;								//current top speed available
+	public float speed_top			= 25f;								//current top speed available
 	public float sprint_mult		= 1f;								//multiplies the speed_top
-	public float sprint_max			= 1.5f;
+	public float sprint_max			= 1.8f;
 
-	public float jump_force_min		= 2f;
-	public float jump_force_max		= 4f;
-	public float jump_force			= 2f;
+	public float jump_force_min		= 5f;
+	public float jump_force_max		= 10f;
+	public float jump_force			= 5f;
 
-	public float accel_force		= 100f;
-	public float decel_force		= 2f;
+	public float accel_force		= 45f;
+	public float decel_force		= .2f;
 
-	public float dash_len_min		= 1f;
-	public float dash_len_max		= 2f;
-	public float dash_len			= 1f;
+	public float dash_len_min		= .3f;
+	public float dash_len_max		= .8f;
+	public float dash_len			= .3f;
 	public float dash_time			= 0f;
-	public float dash_cool_min		= 3f;
-	public float dash_cool_max		= 6f;
-	public float dash_cool			= 6f;
+	public float dash_cool_min		= .5f;
+	public float dash_cool_max		= 4f;
+	public float dash_cool			= 4f;
 	public float dash_cool_time		= 0f;
 
-	public float dash_speed			= 10f;
-	public float dash_dampen		= .2f;
+	public float dash_speed			= 15f;
+	public float dash_dampen		= .6f;
 
 	public float wall_slide_speed	= 1f;
 
@@ -70,7 +70,7 @@ public class playerControl1 : MonoBehaviour {
 	public bool tap_right			= false;
 	public bool tap_left			= false;
 	public float tap_time 			= 0f;
-	public float tap_cool			= .1f;								//time to double tap in seconds
+	public float tap_cool			= .45f;								//time to double tap in seconds
 	public float tap_last           = 0f;
 
 	public float grav				= 2.5f;
