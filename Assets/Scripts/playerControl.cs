@@ -83,12 +83,12 @@ public class playerControl : MonoBehaviour {
 
 
 	/************  Statistic Adjustment Variables  ************/
-	public float speed_decay		= .1f;								//decay in seconds
-	public float speed_inc			= .4f;								//time sprinting in seconds
+	public float speed_decay		= .08f;								//decay in seconds
+	public float speed_inc			= .3f;								//time sprinting in seconds
 	public float jump_decay			= .1f;
 	public float jump_inc			= .5f;
 	public float dash_cool_decay	= .05f;
-	public float dash_cool_inc		= .5f;
+	public float dash_cool_inc		= .3f;
 
 
 
@@ -106,6 +106,7 @@ public class playerControl : MonoBehaviour {
 		}
 
 		MoveDash();
+		anim.SetBool ("dashing",dashing);
 
 		float move_dir = rigidbody2D.velocity.x;
 
@@ -121,7 +122,10 @@ public class playerControl : MonoBehaviour {
 			facing_right = false;
 		}
 
-		anim.SetBool ("dashing",dashing);
+
+
+		DecayValues();
+		CapValues();
 	}
 
 	void FixedUpdate () {
@@ -132,6 +136,11 @@ public class playerControl : MonoBehaviour {
 
 		anim.SetFloat ("hSpeed",Mathf.Abs (rigidbody2D.velocity.x));
 		anim.SetFloat ("vSpeed",rigidbody2D.velocity.y);
+		CapValues ();
+	}
+
+	void OnGUI(){
+		DevInfoGraphics();
 	}
 
 	void MoveWallGrab(){
@@ -161,6 +170,22 @@ public class playerControl : MonoBehaviour {
 		anim.SetBool ("wallGrab", wallgrabbing);
 	}
 
+	void DecayValues(){
+		speed_top -= speed_decay * Time.deltaTime;
+		if (speed_top < speed_min) speed_top = speed_min;
+
+		jump_force -= jump_decay * Time.deltaTime;
+		if (jump_force < jump_force_min) jump_force = jump_force_min;
+
+		dash_cool += dash_cool_decay * Time.deltaTime;
+		if (dash_cool > dash_cool_max) dash_cool = dash_cool_max;
+	}
+	void CapValues(){
+		speed_top = Mathf.Min(speed_top,speed_max);
+		jump_force = Mathf.Min (jump_force,jump_force_max);
+		dash_cool = Mathf.Max(dash_cool,dash_cool_min);
+	}
+
 	void MoveDash(){
 	if (grounded || can_airdash){
 		if (!tap_right && Input.GetAxis ("Horizontal") > 0 && tap_last == 0) {
@@ -170,6 +195,7 @@ public class playerControl : MonoBehaviour {
 		}
 		else if (tap_right && Input.GetAxis ("Horizontal") > 0 && tap_last == 0 && !dashing && can_dash) {
 			dashing = true;
+			dash_cool -= dash_cool_inc;
 			data.PlayerDashed();
 			rigidbody2D.velocity = new Vector2 (dash_speed,0);
 			dash_time = Time.time + dash_len;
@@ -186,6 +212,7 @@ public class playerControl : MonoBehaviour {
 		}
 		else if (tap_left && Input.GetAxis ("Horizontal") < 0 && tap_last == 0 && !dashing && can_dash) {
 			dashing = true;
+			dash_cool -= dash_cool_inc;
 			data.PlayerDashed();
 			rigidbody2D.velocity = new Vector2 (-dash_speed,0);
 			dash_time = Time.time + dash_len;
@@ -227,7 +254,8 @@ public class playerControl : MonoBehaviour {
 		if (Input.GetButton ("Sprint") && can_sprint){
 			data.AddRunningTime(Time.deltaTime);
 			sprint_mult = sprint_max;
-			Debug.Log ("Sprinting");
+			speed_top += speed_inc * Time.deltaTime;
+			//Debug.Log ("Sprinting");
 		} else sprint_mult = 1f;
 
 		//Dampen Move Speed
@@ -262,12 +290,14 @@ public class playerControl : MonoBehaviour {
 		if (grounded && jump && can_jump){
 			//rigidbody2D.AddForce(Vector2.up * jump_force * jForce);
 				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x,jump_force * jForce );
+				jump_force += jump_inc;
 			grounded = false;
 			if (!can_dub_jump) can_jump = false;
 			}
 		else
 			if (!grounded && jump && can_jump){
 				can_jump = false;
+				jump_force += jump_inc;
 				//rigidbody2D.AddForce(Vector2.up * jump_force * jForce);
 				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x,jump_force * jForce );
 			}
@@ -283,7 +313,7 @@ public class playerControl : MonoBehaviour {
 				jVect.Normalize();
 				data.PlayerJumped();
 				wallgrabbing = false;
-
+				jump_force += jump_inc;
 				//rigidbody2D.velocity = jVect * jump_force * jFWall ;
 				rigidbody2D.AddForce (jVect * jump_force * jFWall);
 				Debug.Log (rigidbody2D.velocity);
@@ -293,5 +323,12 @@ public class playerControl : MonoBehaviour {
 		}
 
 		anim.SetBool ("grounded",grounded);
+	}
+
+	void DevInfoGraphics(){
+		GUI.contentColor = Color.black;
+		GUI.Label(new Rect(10,10,200,20),"Speed: "+speed_top);
+		GUI.Label(new Rect(10,40,200,20),"Jump: "+jump_force);
+		GUI.Label(new Rect(10,70,200,20),"Dash CD: "+dash_cool);
 	}
 }
