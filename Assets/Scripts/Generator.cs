@@ -38,10 +38,11 @@ public static class Generator {
 				float platformWidth = platform.GetComponent<BoxCollider2D>().size.x;
 				while (genLocation < end)
 				{
-					genLocation+=platformWidth*2+0.5f;
-					platY += Random.Range(-1, 2);
+					int scale = Random.Range (1, (int)Mathf.Floor(data.curRunSpeed));
+					genLocation+=(platformWidth+0.25f)*scale;
+					platY += Random.Range(-1, (int)Mathf.Floor(data.curJumpHeight));
 					GameObject newPlat = (GameObject) Object.Instantiate(platform, new Vector3(genLocation, platY), Quaternion.identity);
-					newPlat.transform.localScale = new Vector3(2, 1, 1);
+					newPlat.transform.localScale = new Vector3(scale, 1, 1);
 				}
 				GameObject newTrigger = (GameObject) Object.Instantiate(trigger, new Vector3(end - chunkWidth/2, path.y), trigger.transform.rotation);
 				newTrigger.GetComponent<MakeNextChunk>().player = player;
