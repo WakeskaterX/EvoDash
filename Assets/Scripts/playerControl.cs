@@ -77,8 +77,12 @@ public class playerControl : MonoBehaviour {
 
 	public PlayerData data = new PlayerData();
 
+	public bool facing_right		= true;
+
+	Animator anim;
+
 	void Start () {
-	
+		anim = GetComponent<Animator>();
 	}
 
 	void Update(){
@@ -87,10 +91,22 @@ public class playerControl : MonoBehaviour {
 			MoveWallGrab ();
 			MoveJump ();
 		}
-	
 
 		MoveDash();
-		
+
+		float move_dir = rigidbody2D.velocity.x;
+
+		if (move_dir >= .1 && !facing_right){
+			Vector3 scale = transform.localScale;
+			scale.x *= -1;
+			transform.localScale = scale;
+			facing_right = true;
+		} else if (move_dir <= .1 && facing_right){
+			Vector3 scale = transform.localScale;
+			scale.x *= -1;
+			transform.localScale = scale;
+			facing_right = false;
+		}
 	}
 
 	void FixedUpdate () {
@@ -98,6 +114,8 @@ public class playerControl : MonoBehaviour {
 		if (!dashing){
 			MoveHoriz();
 		}
+
+		anim.SetFloat ("hSpeed",Mathf.Abs (rigidbody2D.velocity.x));
 	
 	}
 
@@ -124,6 +142,9 @@ public class playerControl : MonoBehaviour {
 				rigidbody2D.velocity = new Vector2(0f,wall_slide_speed);
 			}
 		} else wall_side = 0;
+
+
+		anim.SetBool ("wallGrab", wallgrabbing);
 	}
 
 	void MoveDash(){
