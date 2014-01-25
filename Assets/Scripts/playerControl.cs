@@ -47,7 +47,7 @@ public class playerControl : MonoBehaviour {
 	public int lives				= 3;
 
 	public bool can_jump			= true;
-	public bool can_dub_jump		= true;
+	public bool can_dub_jump		= false;
 	public bool can_wall_jump		= true;
 	public bool can_dash			= true;
 	public bool can_airdash			= true;
@@ -125,7 +125,7 @@ public class playerControl : MonoBehaviour {
 	}
 
 	void MoveDash(){
-	if (grounded){
+	if (grounded || can_airdash){
 		if (!tap_right && Input.GetAxis ("Horizontal") > 0 && tap_last == 0) {
 			tap_time = Time.time + tap_cool;
 			tap_right = true;
@@ -206,7 +206,7 @@ public class playerControl : MonoBehaviour {
 
 	void MoveJump(){
 		bool jump = Input.GetButtonDown("Jump");
-		float jForce = 100f;
+		float jForce = 2.2f;
 		float jFWall = 200f;
 
 		if (!wallgrabbing){
@@ -217,14 +217,16 @@ public class playerControl : MonoBehaviour {
 			}
 
 		if (grounded && jump && can_jump){
-			rigidbody2D.AddForce(Vector2.up * jump_force * jForce);
+			//rigidbody2D.AddForce(Vector2.up * jump_force * jForce);
+				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x,jump_force * jForce );
 			grounded = false;
 			if (!can_dub_jump) can_jump = false;
 			}
 		else
 			if (!grounded && jump && can_jump){
 				can_jump = false;
-				rigidbody2D.AddForce(Vector2.up * jump_force * jForce);
+				//rigidbody2D.AddForce(Vector2.up * jump_force * jForce);
+				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x,jump_force * jForce );
 			}
 		}
 		else{
@@ -242,6 +244,8 @@ public class playerControl : MonoBehaviour {
 				//rigidbody2D.velocity = jVect * jump_force * jFWall ;
 				rigidbody2D.AddForce (jVect * jump_force * jFWall);
 				Debug.Log (rigidbody2D.velocity);
+
+				if (!can_dub_jump)	can_jump = false;
 			}
 		}
 	}
