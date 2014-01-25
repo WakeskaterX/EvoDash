@@ -20,9 +20,14 @@ public class playerControl : MonoBehaviour {
 	public float dash_len_min		= 1f;
 	public float dash_len_max		= 2f;
 	public float dash_len			= 1f;
+	public float dash_time			= 0f;
 	public float dash_cool_min		= 3f;
 	public float dash_cool_max		= 6f;
 	public float dash_cool			= 6f;
+	public float dash_cool_time		= 0f;
+
+	public float dash_speed			= 10f;
+	public float dash_dampen		= .2f;
 
 	public float endure_max			= 100f;
 	public float endure				= 100f;
@@ -61,6 +66,8 @@ public class playerControl : MonoBehaviour {
 	public float tap_cool			= .1f;								//time to double tap in seconds
 	public float tap_last           = 0f;
 
+	public float grav				= 2.5f;
+
 	void Start () {
 	
 	}
@@ -83,13 +90,21 @@ public class playerControl : MonoBehaviour {
 	}
 
 	void MoveDash(){
+
+
+	if (grounded){
 		if (!tap_right && Input.GetAxis ("Horizontal") > 0 && tap_last == 0) {
 			tap_time = Time.time + tap_cool;
 			tap_right = true;
 			//Debug.Log("tap right");
 		}
-		else if (tap_right && Input.GetAxis ("Horizontal") > 0 && tap_last == 0) {
+		else if (tap_right && Input.GetAxis ("Horizontal") > 0 && tap_last == 0 && !dashing && can_dash) {
 			dashing = true;
+			rigidbody2D.velocity = new Vector2 (dash_speed,0);
+			dash_time = Time.time + dash_len;
+			dash_cool_time = Time.time + dash_cool;
+			rigidbody2D.gravityScale = 0f;
+			can_dash = false;
 			//Debug.Log("dash right");
 		}
 
@@ -98,14 +113,29 @@ public class playerControl : MonoBehaviour {
 			tap_left = true;
 			//Debug.Log("tap left");
 		}
-		else if (tap_left && Input.GetAxis ("Horizontal") < 0 && tap_last == 0) {
+		else if (tap_left && Input.GetAxis ("Horizontal") < 0 && tap_last == 0 && !dashing && can_dash) {
 			dashing = true;
+			rigidbody2D.velocity = new Vector2 (-dash_speed,0);
+			dash_time = Time.time + dash_len;
+			dash_cool_time = Time.time + dash_cool;
+			rigidbody2D.gravityScale = 0f;
+			can_dash = false;
 			//Debug.Log("dash left");
-		}
+		}}
 
 		if(Time.time > tap_time) {
 			tap_left = false;
 			tap_right = false;
+		}
+
+		if (Time.time > dash_time && dashing){
+			dashing = false;
+			rigidbody2D.velocity = new Vector2 (rigidbody2D.velocity.x * dash_dampen,rigidbody2D.velocity.y);
+			rigidbody2D.gravityScale = grav;
+		}
+
+		if (Time.time > dash_cool_time && !can_dash){
+			can_dash = true;
 		}
 
 		tap_last = Input.GetAxis ("Horizontal");
