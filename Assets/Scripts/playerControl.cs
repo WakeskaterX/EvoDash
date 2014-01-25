@@ -49,6 +49,7 @@ public class playerControl : MonoBehaviour {
 	public bool grounded			= true;
 	public bool sprinting			= false;
 	public bool dashing				= false;
+	public bool wallgrabbing		= false;
 
 	public Transform ground_check;
 
@@ -58,47 +59,85 @@ public class playerControl : MonoBehaviour {
 	public bool tap_left			= false;
 	public float tap_time 			= 0f;
 	public float tap_cool			= .1f;								//time to double tap in seconds
+	public float tap_last           = 0f;
 
 	void Start () {
 	
 	}
 
 	void Update(){
-		bool jump = Input.GetButtonDown("Jump");
 
-		grounded = Physics2D.OverlapArea (new Vector2(transform.position.x-.1f,transform.position.y), new Vector2(ground_check.position.x+.1f,ground_check.position.y), 1 << LayerMask.NameToLayer ("Platform"));
-
-		if (grounded && jump && can_jump){
-			rigidbody2D.AddForce(Vector2.up * jump_force * 100);
-			grounded = false;
+		if (!dashing){
+			MoveJump ();
 		}
 
-		
-
+		MoveDash();
 	}
 
 	void FixedUpdate () {
 
+		if (!dashing){
+			MoveHoriz();
+		}
+	
+	}
+
+	void MoveDash(){
+		if (!tap_right && Input.GetAxis ("Horizontal") > 0 && tap_last == 0) {
+			tap_time = Time.time + tap_cool;
+			tap_right = true;
+			//Debug.Log("tap right");
+		}
+		else if (tap_right && Input.GetAxis ("Horizontal") > 0 && tap_last == 0) {
+			dashing = true;
+			//Debug.Log("dash right");
+		}
+
+		if (!tap_left && Input.GetAxis ("Horizontal") < 0 && tap_last == 0) {
+			tap_time = Time.time + tap_cool;
+			tap_left = true;
+			//Debug.Log("tap left");
+		}
+		else if (tap_left && Input.GetAxis ("Horizontal") < 0 && tap_last == 0) {
+			dashing = true;
+			//Debug.Log("dash left");
+		}
+
+		if(Time.time > tap_time) {
+			tap_left = false;
+			tap_right = false;
+		}
+
+		tap_last = Input.GetAxis ("Horizontal");
+	}
+
+	void MoveHoriz(){
 		float h = Input.GetAxis ("Horizontal");
 		float velX = Mathf.Sign (rigidbody2D.velocity.x) * (Mathf.Max (Mathf.Abs (rigidbody2D.velocity.x) - decel_force, 0));
-
+		
 		if (Input.GetButton ("Sprint") && can_sprint){
 			sprint_mult = sprint_max;
 			Debug.Log ("Sprinting");
 		} else sprint_mult = 1f;
-
+		
 		rigidbody2D.velocity = new Vector2 (velX, rigidbody2D.velocity.y);
-
+		
 		rigidbody2D.AddForce (Vector2.right * h * accel_force * sprint_mult);
-
+		
 		if (Mathf.Abs(rigidbody2D.velocity.x) > (speed_top * sprint_mult)){ 
 			rigidbody2D.velocity = new Vector2(Mathf.Sign (rigidbody2D.velocity.x) * (speed_top * sprint_mult), rigidbody2D.velocity.y);
 			Debug.Log ("Top Speed reached!");
 		}
+	}
 
-
-
-
-	
+	void MoveJump(){
+		bool jump = Input.GetButtonDown("Jump");
+		
+		grounded = Physics2D.OverlapArea (new Vector2(transform.position.x-.1f,transform.position.y), new Vector2(ground_check.position.x+.1f,ground_check.position.y), 1 << LayerMask.NameToLayer ("Platform"));
+		
+		if (grounded && jump && can_jump){
+			rigidbody2D.AddForce(Vector2.up * jump_force * 100);
+			grounded = false;
+		}
 	}
 }
