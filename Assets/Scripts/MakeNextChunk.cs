@@ -24,15 +24,17 @@ public class MakeNextChunk : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other) {
 		//Random.seed = (int)Time.fixedTime;
-		PlayerDataCapsule data = player.GetComponent<playerControl> ().data.giveData ();
+		PlayerDataCapsule data = player.GetComponent<playerControl1> ().data.giveData ();
 		if (madeNextChunk)
 						return;
-		Vector3 curLocation = gameObject.transform.position;
+		Vector3 curLocation = startLocation;
 		Vector3 triggerLoc = Vector3.zero;
 		Instantiate (platform, new Vector3(curLocation.x, curLocation.y, 0f), Quaternion.identity);
 		for (int i = 0; i < 10; i++)
 		{
 			curLocation.x +=1.5f;
+			curLocation.y +=data.numberJumps/10f;
+			print(data.numberJumps);
 			Instantiate (platform, new Vector3(curLocation.x, curLocation.y, 0f), Quaternion.identity);
 			if (i == 5) 
 			{

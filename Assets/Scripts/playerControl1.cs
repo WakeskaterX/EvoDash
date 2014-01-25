@@ -208,7 +208,6 @@ public class playerControl1 : MonoBehaviour {
 		
 		if (Mathf.Abs(rigidbody2D.velocity.x) > (speed_top * sprint_mult)){ 
 			rigidbody2D.velocity = new Vector2(Mathf.Sign (rigidbody2D.velocity.x) * (speed_top * sprint_mult), rigidbody2D.velocity.y);
-			Debug.Log ("Top Speed reached!");
 		}
 	}
 
@@ -227,6 +226,7 @@ public class playerControl1 : MonoBehaviour {
 		if (grounded && jump && can_jump){
 			//rigidbody2D.AddForce(Vector2.up * jump_force * jForce);
 				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x,jump_force * jForce );
+				data.PlayerJumped();
 			grounded = false;
 			if (!can_dub_jump) can_jump = false;
 			}
@@ -235,6 +235,7 @@ public class playerControl1 : MonoBehaviour {
 				can_jump = false;
 				//rigidbody2D.AddForce(Vector2.up * jump_force * jForce);
 				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x,jump_force * jForce );
+				data.PlayerJumped();
 			}
 		}
 		else{

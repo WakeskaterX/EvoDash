@@ -18,7 +18,10 @@ public class PlayerData {
 		maxJumpHeight = 0;
 	}
 
-	public void PlayerJumped() { numberJumps++; }
+	public void PlayerJumped() { 
+		numberJumps++; 
+		Debug.Log ("Added jump!");
+	}
 	public void PlayerDashed() { numberDashes++; }
 	public void PlayerCurrentStats(float jump, float dash, float run)
 	{
