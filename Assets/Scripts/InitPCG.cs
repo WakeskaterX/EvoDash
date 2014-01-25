@@ -5,6 +5,7 @@ public class InitPCG : MonoBehaviour {
 
 	public GameObject platform;
 	public GameObject nextTrigger;
+	public GameObject player;
 
 	// Use this for initialization
 	void Start () {
@@ -26,6 +27,7 @@ public class InitPCG : MonoBehaviour {
 		nTrigger.GetComponent<MakeNextChunk> ().platform = platform;
 		nTrigger.GetComponent<MakeNextChunk> ().nextTrigger = nextTrigger;
 		nTrigger.GetComponent<MakeNextChunk> ().startLocation = curLocation;
+		nTrigger.GetComponent<MakeNextChunk> ().player = player;
 	}
 	
 	// Update is called once per frame

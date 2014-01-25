@@ -24,6 +24,7 @@ public class MakeNextChunk : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other) {
 		//Random.seed = (int)Time.fixedTime;
+		PlayerDataCapsule data = player.GetComponent<playerControl> ().data.giveData ();
 		if (madeNextChunk)
 						return;
 		Vector3 curLocation = gameObject.transform.position;
@@ -43,6 +44,7 @@ public class MakeNextChunk : MonoBehaviour {
 		nTrigger.GetComponent<MakeNextChunk> ().platform = platform;
 		nTrigger.GetComponent<MakeNextChunk> ().nextTrigger = nextTrigger;
 		nTrigger.GetComponent<MakeNextChunk> ().startLocation = curLocation;
+		nTrigger.GetComponent<MakeNextChunk> ().player = player;
 		madeNextChunk = true;
 		gameObject.GetComponent<SpriteRenderer> ().color = new Color (0, 0, 255);
 	}

@@ -138,5 +138,9 @@ public class playerControl : MonoBehaviour {
 		last_move = Input.GetAxis ("Horizontal");
 	}
 
+	void OnApplicationQuit() {
+		print (data.ToString());
+	}
+
 }
 

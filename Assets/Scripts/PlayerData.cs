@@ -55,6 +55,14 @@ public class PlayerData {
 		data.maxJumpHeight = maxJumpHeight;
 		return data;
 	}
+
+	public string ToString()
+	{
+		return "Jumps: " + numberJumps +
+						"\nDashes: " + numberDashes +
+						"\nRunning Time: " + runningTime +
+						"\nAir Time: " + airTime;
+	}
 }
 
 public struct PlayerDataCapsule {
