@@ -9,7 +9,6 @@ public class MakeNextChunk : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
 	}
 
 	void Awake() {
@@ -25,8 +24,16 @@ public class MakeNextChunk : MonoBehaviour {
 		//Random.seed = (int)Time.fixedTime;
 		if (madeNextChunk)
 						return;
-		Instantiate (platform, new Vector3(gameObject.transform.position.x +1.28f, 0, 0), Quaternion.identity);
-		GameObject nTrigger = (GameObject) Instantiate (nextTrigger, new Vector3(gameObject.transform.position.x +1.28f, gameObject.transform.position.y, 0), gameObject.transform.rotation);
+		Vector3 curLocation = gameObject.transform.position;
+		curLocation.x += 1.28f * 5f;
+		curLocation.y -= 1f * 5f;
+		for (int i = 0; i < 10; i++)
+		{
+			curLocation.x += 1.28f;
+			curLocation.y -=1;
+			Instantiate (platform, new Vector3(curLocation.x, curLocation.y, 0f), Quaternion.identity);
+		}
+		GameObject nTrigger = (GameObject) Instantiate (nextTrigger, new Vector3(curLocation.x-1.28f*5f, gameObject.transform.position.y-10f, 1), gameObject.transform.rotation);
 		nTrigger.GetComponent<MakeNextChunk> ().platform = platform;
 		nTrigger.GetComponent<MakeNextChunk> ().nextTrigger = nextTrigger;
 		madeNextChunk = true;
