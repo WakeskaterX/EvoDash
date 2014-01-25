@@ -26,7 +26,7 @@ public static class Generator {
 			foreach (Vector3 path in pathLocations) 
 			{
 				float genLocation = path.x;
-				float end = start+chunkWidth;
+				float end = genLocation+chunkWidth;
 				
 			}
 		}
