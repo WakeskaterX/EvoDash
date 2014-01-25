@@ -11,7 +11,12 @@ public static class Generator {
 
 	public static void MakeChunk(PlayerDataCapsule data, GameObject platform, GameObject trigger)
 	{
+		new BasicGenerator ().GenerateChunk (data, platform, trigger);
+	}
 
+	public static void AddPath(Vector3 path)
+	{
+		pathLocations.Add (path);
 	}
 
 	interface ChunkGenerator 
@@ -23,11 +28,18 @@ public static class Generator {
 	{
 		public void GenerateChunk(PlayerDataCapsule data, GameObject platform, GameObject trigger)
 		{
+			List<Vector3> newPaths = new List<Vector3> ();
 			foreach (Vector3 path in pathLocations) 
 			{
 				float genLocation = path.x;
-				float end = start+chunkWidth;
-				
+				float end = genLocation+chunkWidth;
+				float platformWidth = platform.GetComponent<BoxCollider2D>().size.x;
+				while (genLocation < end)
+				{
+					genLocation+=platformWidth+1f;
+					Object.Instantiate(platform, new Vector3(genLocation, path.y), Quaternion.identity);
+				}
+				newPaths.Add(new Vector3(end, path.y));
 			}
 		}
 	}

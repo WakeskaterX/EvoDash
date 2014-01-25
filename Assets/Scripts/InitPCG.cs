@@ -28,6 +28,7 @@ public class InitPCG : MonoBehaviour {
 		nTrigger.GetComponent<MakeNextChunk> ().nextTrigger = nextTrigger;
 		nTrigger.GetComponent<MakeNextChunk> ().startLocation = curLocation;
 		nTrigger.GetComponent<MakeNextChunk> ().player = player;
+		Generator.AddPath (curLocation);
 	}
 	
 	// Update is called once per frame
