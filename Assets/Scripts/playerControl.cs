@@ -101,7 +101,7 @@ public class playerControl : MonoBehaviour {
 			scale.x *= -1;
 			transform.localScale = scale;
 			facing_right = true;
-		} else if (move_dir <= .1 && facing_right){
+		} else if (move_dir <= -.1 && facing_right){
 			Vector3 scale = transform.localScale;
 			scale.x *= -1;
 			transform.localScale = scale;
@@ -122,12 +122,11 @@ public class playerControl : MonoBehaviour {
 	void MoveWallGrab(){
 
 		if (!grounded){
-			if (Physics2D.Linecast (transform.position,wall_check_left.position,is_ground)){
+			if (Physics2D.Linecast (transform.position,wall_check_right.position,is_ground ) ||Physics2D.Linecast (transform.position,wall_check_left.position,is_ground )){
 				if (Input.GetAxis ("Horizontal") < 0){
 					wallgrabbing = true;
 					wall_side = -1;
-				}
-			}else if (Physics2D.Linecast (transform.position,wall_check_right.position,is_ground)){
+				}else
 				if (Input.GetAxis ("Horizontal") > 0){
 					wallgrabbing = true;
 					wall_side = 1;
