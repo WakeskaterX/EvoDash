@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerData : MonoBehaviour {
+public class PlayerData {
 	private int numberJumps, numberDashes;
-	private int curJumpHeight, curDashLen, curRunSpeed;
+	private float curJumpHeight, curDashLen, curRunSpeed;
 	private float runningTime, airTime, maxJumpHeight;
 
-	PlayerData()
+	public PlayerData()
 	{
 		numberJumps = 0;
 		numberDashes = 0;
@@ -60,7 +60,7 @@ public class PlayerData : MonoBehaviour {
 public struct PlayerDataCapsule {
 	
 	public int numberJumps, numberDashes;
-	public int curJumpHeight, curDashLen, curRunSpeed;
+	public float curJumpHeight, curDashLen, curRunSpeed;
 	public float runningTime, airTime, maxJumpHeight;
 
 }

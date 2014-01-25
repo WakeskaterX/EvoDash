@@ -5,6 +5,7 @@ public class MakeNextChunk : MonoBehaviour {
 
 	public GameObject platform;
 	public GameObject nextTrigger;
+	public GameObject player;
 	public bool madeNextChunk = false;
 	public Vector3 startLocation;
 

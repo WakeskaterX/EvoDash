@@ -60,7 +60,9 @@ public class playerControl : MonoBehaviour {
 	public float tap_time 			= 0f;
 	public float tap_cool			= .1f;								//time to double tap in seconds
 	public float last_move			= 0f;
-	
+
+	public PlayerData data = new PlayerData();
+
 	void Start () {
 		
 	}
@@ -69,8 +71,12 @@ public class playerControl : MonoBehaviour {
 		bool jump = Input.GetButtonDown("Jump");
 		
 		grounded = Physics2D.OverlapArea (new Vector2(transform.position.x-.1f,transform.position.y), new Vector2(ground_check.position.x+.1f,ground_check.position.y), 1 << LayerMask.NameToLayer ("Platform"));
-		
+
+		if (!grounded)
+			data.AddAirTime (Time.deltaTime);
+
 		if (grounded && jump && can_jump){
+			data.PlayerJumped();
 			rigidbody2D.AddForce(Vector2.up * jump_force * 100);
 			grounded = false;
 		}
@@ -85,6 +91,7 @@ public class playerControl : MonoBehaviour {
 		float velX = Mathf.Sign (rigidbody2D.velocity.x) * (Mathf.Max (Mathf.Abs (rigidbody2D.velocity.x) - decel_force, 0));
 		
 		if (Input.GetButton ("Sprint") && can_sprint){
+			data.AddRunningTime(Time.deltaTime);
 			sprint_mult = sprint_max;
 			Debug.Log ("Sprinting");
 		} else sprint_mult = 1f;
@@ -109,6 +116,7 @@ public class playerControl : MonoBehaviour {
 		}
 		else if (tap_right && Input.GetAxis ("Horizontal") > 0 && last_move == 0){
 			dashing = true;
+			data.PlayerDashed ();
 			Debug.Log ("Dash Right");
 		}
 		
@@ -119,6 +127,7 @@ public class playerControl : MonoBehaviour {
 		}
 		else if (tap_left && Input.GetAxis ("Horizontal") < 0 && last_move == 0){
 			dashing = true;
+			data.PlayerDashed ();
 			Debug.Log ("Dash Left");
 		}
 
@@ -126,7 +135,6 @@ public class playerControl : MonoBehaviour {
 			tap_right = false;
 			tap_left = false;
 		}
-		
 		last_move = Input.GetAxis ("Horizontal");
 	}
 
