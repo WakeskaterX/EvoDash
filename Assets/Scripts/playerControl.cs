@@ -48,6 +48,7 @@ public class playerControl : MonoBehaviour {
 
 	public bool can_jump			= true;
 	public bool can_dub_jump		= true;
+	public bool can_wall_jump		= true;
 	public bool can_dash			= true;
 	public bool can_airdash			= true;
 	public bool can_sprint			= true;
@@ -61,6 +62,8 @@ public class playerControl : MonoBehaviour {
 	public Transform ground_check;
 	public Transform wall_check_left;
 	public Transform wall_check_right;
+
+	public int	wall_side			= 0;
 
 	public LayerMask is_ground;
 
@@ -80,9 +83,9 @@ public class playerControl : MonoBehaviour {
 
 		if (!dashing){
 			MoveWallGrab ();
-
-			if (!wallgrabbing)  MoveJump ();
+			MoveJump ();
 		}
+	
 
 		MoveDash();
 		
@@ -99,20 +102,26 @@ public class playerControl : MonoBehaviour {
 	void MoveWallGrab(){
 
 		if (!grounded){
-			if (Input.GetAxis ("Horizontal") < 0 && Physics2D.Linecast (transform.position,wall_check_left.position,is_ground)){
-				wallgrabbing = true;
-			}else if (Input.GetAxis ("Horizontal") > 0 && Physics2D.Linecast (transform.position,wall_check_right.position,is_ground)){
-				wallgrabbing = true;
+			if (Physics2D.Linecast (transform.position,wall_check_left.position,is_ground)){
+				if (Input.GetAxis ("Horizontal") < 0){
+					wallgrabbing = true;
+					wall_side = -1;
+				}
+			}else if (Physics2D.Linecast (transform.position,wall_check_right.position,is_ground)){
+				if (Input.GetAxis ("Horizontal") > 0){
+					wallgrabbing = true;
+					wall_side = 1;
+				}
 			}else wallgrabbing = false;
-		} else wallgrabbing = false;
+		}else wallgrabbing = false;
 
 		if (wallgrabbing)
 		{
 			if (Mathf.Abs (rigidbody2D.velocity.y) > wall_slide_speed)
 			{
-				rigidbody2D.velocity = new Vector2(0,wall_slide_speed);
+				rigidbody2D.velocity = new Vector2(0f,wall_slide_speed);
 			}
-		}
+		} else wall_side = 0;
 	}
 
 	void MoveDash(){
@@ -162,19 +171,30 @@ public class playerControl : MonoBehaviour {
 			can_dash = true;
 		}
 
+		if (tap_last != 0 && Input.GetAxis ("Horizontal") == 0)
+		{
+			if (tap_last < 0 && tap_right) tap_right = false;
+
+			if (tap_last > 0 && tap_left) tap_left = false;
+		}
+
 		tap_last = Input.GetAxis ("Horizontal");
 	}
 
 	void MoveHoriz(){
 		float h = Input.GetAxis ("Horizontal");
-		float velX = Mathf.Sign (rigidbody2D.velocity.x) * (Mathf.Max (Mathf.Abs (rigidbody2D.velocity.x) - decel_force, 0));
-		
+		float velX = 0f;
+
 		if (Input.GetButton ("Sprint") && can_sprint){
 			sprint_mult = sprint_max;
 			Debug.Log ("Sprinting");
 		} else sprint_mult = 1f;
-		
-		rigidbody2D.velocity = new Vector2 (velX, rigidbody2D.velocity.y);
+
+		//Dampen Move Speed
+		if (grounded){
+			velX = Mathf.Sign (rigidbody2D.velocity.x) * (Mathf.Max (Mathf.Abs (rigidbody2D.velocity.x) - decel_force, 0));
+			rigidbody2D.velocity = new Vector2 (velX, rigidbody2D.velocity.y);
+		}
 		
 		rigidbody2D.AddForce (Vector2.right * h * accel_force * sprint_mult);
 		
@@ -186,12 +206,43 @@ public class playerControl : MonoBehaviour {
 
 	void MoveJump(){
 		bool jump = Input.GetButtonDown("Jump");
+		float jForce = 100f;
+		float jFWall = 200f;
+
+		if (!wallgrabbing){
+			grounded = Physics2D.OverlapArea (new Vector2(transform.position.x-.1f,transform.position.y), new Vector2(ground_check.position.x+.1f,ground_check.position.y), 1 << LayerMask.NameToLayer ("Platform"));
 		
-		grounded = Physics2D.OverlapArea (new Vector2(transform.position.x-.1f,transform.position.y), new Vector2(ground_check.position.x+.1f,ground_check.position.y), 1 << LayerMask.NameToLayer ("Platform"));
-		
+			if (grounded) {
+				can_jump = true;
+			}
+
 		if (grounded && jump && can_jump){
-			rigidbody2D.AddForce(Vector2.up * jump_force * 100);
+			rigidbody2D.AddForce(Vector2.up * jump_force * jForce);
 			grounded = false;
+			if (!can_dub_jump) can_jump = false;
+			}
+		else
+			if (!grounded && jump && can_jump){
+				can_jump = false;
+				rigidbody2D.AddForce(Vector2.up * jump_force * jForce);
+			}
+		}
+		else{
+			if (jump && can_wall_jump)
+			{
+				float jvX, jvY;
+				Vector2 jVect;
+				jvX = wall_side * -1f *  2f;
+				jvY = 1f;
+				jVect = new Vector2(jvX,jvY);
+				jVect.Normalize();
+
+				wallgrabbing = false;
+
+				//rigidbody2D.velocity = jVect * jump_force * jFWall ;
+				rigidbody2D.AddForce (jVect * jump_force * jFWall);
+				Debug.Log (rigidbody2D.velocity);
+			}
 		}
 	}
 }
