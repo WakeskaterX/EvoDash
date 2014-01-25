@@ -4,14 +4,15 @@ using System.Collections;
 public class playerControl : MonoBehaviour {
 
 	public float speed_min			= 6f;
-	public float speed_max			= 10f;
+	public float speed_max			= 15f;
 	public float speed_curr			= 1f;
-	public float speed_top			= 6f;								//current top speed available
-	public float sprint_mult		= 1.2f;								//multiplies the speed_top
+	public float speed_top			= 15f;								//current top speed available
+	public float sprint_mult		= 1f;								//multiplies the speed_top
+	public float sprint_max			= 1.5f;
 
 	public float jump_force_min		= 2f;
 	public float jump_force_max		= 4f;
-	public float jump_force_curr	= 2f;
+	public float jump_force			= 2f;
 
 	public float accel_force		= 100f;
 	public float decel_force		= 2f;
@@ -45,25 +46,59 @@ public class playerControl : MonoBehaviour {
 	public bool can_sprint			= true;
 	public bool can_wall_grab		= true;
 
+	public bool grounded			= true;
+	public bool sprinting			= false;
+	public bool dashing				= false;
+
 	public Transform ground_check;
 
 	public LayerMask is_ground;
 
+	public bool tap_right			= false;
+	public bool tap_left			= false;
+	public float tap_time 			= 0f;
+	public float tap_cool			= .1f;								//time to double tap in seconds
 
 	void Start () {
 	
 	}
 
-	void Update () {
+	void Update(){
+		bool jump = Input.GetButtonDown("Jump");
+
+		grounded = Physics2D.OverlapArea (new Vector2(transform.position.x-.1f,transform.position.y), new Vector2(ground_check.position.x+.1f,ground_check.position.y), 1 << LayerMask.NameToLayer ("Platform"));
+
+		if (grounded && jump && can_jump){
+			rigidbody2D.AddForce(Vector2.up * jump_force * 100);
+			grounded = false;
+		}
+
+		
+
+	}
+
+	void FixedUpdate () {
 
 		float h = Input.GetAxis ("Horizontal");
+		float velX = Mathf.Sign (rigidbody2D.velocity.x) * (Mathf.Max (Mathf.Abs (rigidbody2D.velocity.x) - decel_force, 0));
 
-		rigidbody2D.AddForce (Vector2.right * h * accel_force);
+		if (Input.GetButton ("Sprint") && can_sprint){
+			sprint_mult = sprint_max;
+			Debug.Log ("Sprinting");
+		} else sprint_mult = 1f;
 
-		if (Mathf.Abs(rigidbody2D.velocity.x) > speed_top){ 
-			rigidbody2D.velocity = new Vector2(Mathf.Sign (rigidbody2D.velocity.x) * speed_top, rigidbody2D.velocity.y);
-			Debug.Log ("Top Speed maaaaaaxed!");
+		rigidbody2D.velocity = new Vector2 (velX, rigidbody2D.velocity.y);
+
+		rigidbody2D.AddForce (Vector2.right * h * accel_force * sprint_mult);
+
+		if (Mathf.Abs(rigidbody2D.velocity.x) > (speed_top * sprint_mult)){ 
+			rigidbody2D.velocity = new Vector2(Mathf.Sign (rigidbody2D.velocity.x) * (speed_top * sprint_mult), rigidbody2D.velocity.y);
+			Debug.Log ("Top Speed reached!");
 		}
+
+
+
+
 	
 	}
 }
