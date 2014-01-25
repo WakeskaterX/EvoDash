@@ -29,6 +29,8 @@ public class playerControl : MonoBehaviour {
 	public float dash_speed			= 10f;
 	public float dash_dampen		= .2f;
 
+	public float wall_slide_speed	= 1f;
+
 	public float endure_max			= 100f;
 	public float endure				= 100f;
 	public float endure_regen		= 1f;
@@ -57,6 +59,8 @@ public class playerControl : MonoBehaviour {
 	public bool wallgrabbing		= false;
 
 	public Transform ground_check;
+	public Transform wall_check_left;
+	public Transform wall_check_right;
 
 	public LayerMask is_ground;
 
@@ -75,10 +79,13 @@ public class playerControl : MonoBehaviour {
 	void Update(){
 
 		if (!dashing){
-			MoveJump ();
+			MoveWallGrab ();
+
+			if (!wallgrabbing)  MoveJump ();
 		}
 
 		MoveDash();
+		
 	}
 
 	void FixedUpdate () {
@@ -89,9 +96,26 @@ public class playerControl : MonoBehaviour {
 	
 	}
 
+	void MoveWallGrab(){
+
+		if (!grounded){
+			if (Input.GetAxis ("Horizontal") < 0 && Physics2D.Linecast (transform.position,wall_check_left.position,is_ground)){
+				wallgrabbing = true;
+			}else if (Input.GetAxis ("Horizontal") > 0 && Physics2D.Linecast (transform.position,wall_check_right.position,is_ground)){
+				wallgrabbing = true;
+			}else wallgrabbing = false;
+		} else wallgrabbing = false;
+
+		if (wallgrabbing)
+		{
+			if (Mathf.Abs (rigidbody2D.velocity.y) > wall_slide_speed)
+			{
+				rigidbody2D.velocity = new Vector2(0,wall_slide_speed);
+			}
+		}
+	}
+
 	void MoveDash(){
-
-
 	if (grounded){
 		if (!tap_right && Input.GetAxis ("Horizontal") > 0 && tap_last == 0) {
 			tap_time = Time.time + tap_cool;
