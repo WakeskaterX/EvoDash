@@ -55,20 +55,14 @@ public class playerControl : MonoBehaviour {
 	}
 
 	void Update () {
-<<<<<<< HEAD
-		if (Input.GetKey(KeyCode.RightArrow))
-						gameObject.rigidbody2D.AddForce (new Vector2 (10f, 0f));
-=======
 
 		float h = Input.GetAxis ("Horizontal");
 
 		rigidbody2D.AddForce (Vector2.right * h * accel_force);
 
-		if (Mathf.Abs(rigidbody2D.velocity.x) > speed_top){ 
-			rigidbody2D.velocity = new Vector2(Mathf.Sign (rigidbody2D.velocity.x) * speed_top, rigidbody2D.velocity.y);
-			Debug.Log ("Top Speed maaaaaaxed!");
-		}
-	
->>>>>>> 4d28f45a375f9f2357bda043552d185dcb54c80a
+		if (Mathf.Abs (rigidbody2D.velocity.x) > speed_top) { 
+						rigidbody2D.velocity = new Vector2 (Mathf.Sign (rigidbody2D.velocity.x) * speed_top, rigidbody2D.velocity.y);
+						Debug.Log ("Top Speed maaaaaaxed!");
+				}
 	}
 }
