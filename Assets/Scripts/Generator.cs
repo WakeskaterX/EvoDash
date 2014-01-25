@@ -7,6 +7,7 @@ public static class Generator {
 	static int numberPaths = 1;
 	static List<Vector3> pathLocations = new List<Vector3> ();
 	static float chunkWidth = 30f;
+	public static GameObject player;
 
 
 	public static void MakeChunk(PlayerDataCapsule data, GameObject platform, GameObject trigger)
@@ -33,14 +34,22 @@ public static class Generator {
 			{
 				float genLocation = path.x;
 				float end = genLocation+chunkWidth;
+				float platY = path.y;
 				float platformWidth = platform.GetComponent<BoxCollider2D>().size.x;
 				while (genLocation < end)
 				{
-					genLocation+=platformWidth+1f;
-					Object.Instantiate(platform, new Vector3(genLocation, path.y), Quaternion.identity);
+					genLocation+=platformWidth*2+0.5f;
+					platY += Random.Range(-1, 2);
+					GameObject newPlat = (GameObject) Object.Instantiate(platform, new Vector3(genLocation, platY), Quaternion.identity);
+					newPlat.transform.localScale = new Vector3(2, 1, 1);
 				}
-				newPaths.Add(new Vector3(end, path.y));
+				GameObject newTrigger = (GameObject) Object.Instantiate(trigger, new Vector3(end - chunkWidth/2, path.y), trigger.transform.rotation);
+				newTrigger.GetComponent<MakeNextChunk>().player = player;
+				newTrigger.transform.localScale = new Vector3(100, 1, 1);
+				newPaths.Add(new Vector3(end, platY));
 			}
+			pathLocations = newPaths;
+			Debug.Log (pathLocations.ToString ());
 		}
 	}
 }

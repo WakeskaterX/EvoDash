@@ -23,6 +23,7 @@ public class InitPCG : MonoBehaviour {
 				triggerLoc.y += 2f;
 			}
 		}
+		Generator.player = player;
 		GameObject nTrigger = (GameObject) Instantiate (nextTrigger, triggerLoc, gameObject.transform.rotation);
 		nTrigger.GetComponent<MakeNextChunk> ().platform = platform;
 		nTrigger.GetComponent<MakeNextChunk> ().nextTrigger = nextTrigger;
