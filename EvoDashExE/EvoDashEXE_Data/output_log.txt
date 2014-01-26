@@ -1,0 +1,33 @@
+Initialize engine version: 4.3.3f1 (c8ca9b6b9936)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 9.0c [igdumdx32.dll 8.15.10.2182]
+    Renderer: Intel(R) HD Graphics
+    Vendor:   Intel
+    VRAM:     880 MB (via DXGI)
+    Caps:     Shader=30 DepthRT=1 NativeDepth=1 NativeShadow=1 DF16=1 INTZ=1 RAWZ=0 NULL=0 RESZ=1 SlowINTZ=0
+Default GameObject Tag: Player already registered
+ 
+(Filename:  Line: 68)
+
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\Jason\Desktop\Unity Projects\EvoDash\EvoDashExE\EvoDashEXE_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\Jason\Desktop\Unity Projects\EvoDash\EvoDashExE\EvoDashEXE_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\Jason\Desktop\Unity Projects\EvoDash\EvoDashExE\EvoDashEXE_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\Jason\Desktop\Unity Projects\EvoDash\EvoDashExE\EvoDashEXE_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+- Completed reload, in  0.074 seconds
+desktop: 1366x768 60Hz; virtual: 2518x2048 at -1152,-90
+<RI> Initializing input.
+<RI> Input initialized.
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: needs reset, doing it
+FullResetD3DDevice
+ResetD3DDevice
+dev->Reset
+D3Dwindow device not lost anymore
+UnloadTime: 0.607211 ms
+Unloading 3 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
+
+Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 401.
+Total: 1.659950 ms (FindLiveObjects: 0.047735 ms CreateObjectMapping: 0.039009 ms MarkObjects: 0.401898 ms  DeleteObjects: 0.025664 ms)
+
