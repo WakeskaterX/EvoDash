@@ -26,7 +26,7 @@ public class MakeNextChunk : MonoBehaviour {
 		//Random.seed = (int)Time.fixedTime;
 		PlayerDataCapsule data = player.GetComponent<playerControl> ().data.giveData ();
 		if (madeNextChunk)
-						return;
+		{return;}
 		/*
 		Vector3 curLocation = startLocation;
 		Vector3 triggerLoc = Vector3.zero;

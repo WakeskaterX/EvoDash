@@ -7,7 +7,7 @@ public static class Generator {
 	static int numberPaths = 1;
 	static int numberGenerated = 0;
 	static List<Vector3> pathLocations = new List<Vector3> ();
-	static float chunkWidth = 30f;
+	static float chunkWidth = 40f;
 	public static GameObject player;
 	public static GameObject spikes;
 	public static GameObject ground;
@@ -57,14 +57,14 @@ public static class Generator {
 					newPlat = (GameObject) Object.Instantiate(platform, new Vector3(genLocation-platformWidth*scale, (platY+oldY)/2), platform.transform.rotation);
 					newPlat.transform.Rotate(new Vector3(0, 0, 1), 90);
 					newPlat.transform.localScale = new Vector3(vertScale, 1, 1);
-					if (Random.Range(0, numberGenerated) > 3) 
+					if (Random.Range(0, numberGenerated*3) > 2+numberGenerated) 
 					{
-						int rando = Random.Range (0, 3);
-						if (rando == 0)
+						int rando = Random.Range (0, 1+numberGenerated);
+						if (rando < 2)
 							Object.Instantiate(ground, new Vector3(genLocation-platformWidth*scale/2, (platY + 1f)), Quaternion.identity);
-						else if (rando == 1)
+						else if (rando <  5)
 							Object.Instantiate(air, new Vector3(genLocation-platformWidth*scale/2, (platY + 1f)), Quaternion.identity);
-						else if (rando == 2)
+						else
 							Object.Instantiate(ghost, new Vector3(genLocation-platformWidth*scale/2, (platY + 1f)), Quaternion.identity);
 					}
 					oldY = platY;
