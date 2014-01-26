@@ -221,7 +221,7 @@ public static class Generator {
 						GameObject top = (GameObject) Object.Instantiate(platform, new Vector3(genLocation, path.y + 6 + height), Quaternion.identity);
 						top.transform.Rotate (new Vector3(0, 0, 1), 90);
 						top.transform.localScale = new Vector3(10/platformWidth, 1, 1);
-						GameObject bottom = (GameObject) Object.Instantiate(platform, new Vector3(genLocation, path.y - 5 + height + Mathf.Min (0.5f, numberGenerated/10f)), Quaternion.identity);
+						GameObject bottom = (GameObject) Object.Instantiate(platform, new Vector3(genLocation, path.y - 5 + height + Mathf.Min (.2f, numberGenerated/10f)), Quaternion.identity);
 						bottom.transform.Rotate (new Vector3(0, 0, 1), 90);
 						bottom.transform.localScale = new Vector3(10/platformWidth, 1, 1);
 					}
