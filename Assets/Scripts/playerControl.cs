@@ -81,6 +81,7 @@ public class playerControl : MonoBehaviour {
 	public bool stunned				= false;
 	public float stun_time			= 0f;
 	public float stun_dur			= 5f;
+	public bool can_die				= true;
 
 	Animator anim;
 
@@ -154,7 +155,9 @@ public class playerControl : MonoBehaviour {
 	void OnCollisionEnter2D(Collision2D other){
 		//Debug.Log ("Collision Detected!");
 		if (other.gameObject.tag == "Enemy"){
-			PlayerKill();
+			if (can_die){
+				PlayerKill();
+			}
 		}
 	}
 
@@ -164,6 +167,7 @@ public class playerControl : MonoBehaviour {
 	
 	void PlayerKill(){
 		lives -= 1;
+
 		if (lives == 0)
 		{
 			GameOver();
@@ -178,6 +182,7 @@ public class playerControl : MonoBehaviour {
 	
 	void Respawn(){
 		transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width/4,Screen.height/2,20f));
+		can_die = true;
 	}
 
 	void EndureRegen(){
