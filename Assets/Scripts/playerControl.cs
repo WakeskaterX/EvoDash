@@ -151,8 +151,33 @@ public class playerControl : MonoBehaviour {
 		CapValues ();
 	}
 
+	void OnCollisionEnter2D(Collision2D other){
+		//Debug.Log ("Collision Detected!");
+		if (other.gameObject.tag == "Enemy"){
+			PlayerKill();
+		}
+	}
+
 	void OnGUI(){
 		//DevInfoGraphics();
+	}
+	
+	void PlayerKill(){
+		lives -= 1;
+		if (lives == 0)
+		{
+			GameOver();
+		}
+
+		Respawn();
+	}
+
+	void GameOver(){
+		Application.LoadLevel(Application.loadedLevel);
+	}
+	
+	void Respawn(){
+		transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width/4,Screen.height/2,20f));
 	}
 
 	void EndureRegen(){
