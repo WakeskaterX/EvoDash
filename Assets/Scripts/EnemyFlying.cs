@@ -47,6 +47,10 @@ public class EnemyFlying : MonoBehaviour {
 				rigidbody2D.AddForce(ret_vect*en_speed);
 			}
 		}
+
+		if (Vector3.Distance (gameObject.transform.position, player.transform.position) > 20f 
+		    && gameObject.transform.position.x < player.transform.position.x)
+			Destroy(gameObject);
 	}
 
 	void Flip(){

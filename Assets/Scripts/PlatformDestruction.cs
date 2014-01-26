@@ -4,7 +4,7 @@ using System.Collections;
 public class PlatformDestruction : MonoBehaviour {
 
 	public GameObject player;
-	public float dist_to_destroy		= 100f;
+	public float dist_to_destroy		= 25f;
 	// Use this for initialization
 	void Start () {
 		if (player == null) player = GameObject.FindWithTag ("Player");
