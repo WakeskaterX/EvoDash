@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public static class Generator {
 
 	static int numberPaths = 1;
-	static int numberGenerated = 0;
+	public static int numberGenerated = 0;
 	static List<Vector3> pathLocations = new List<Vector3> ();
 	static float chunkWidth = 40f;
 	public static GameObject player;
@@ -27,6 +27,11 @@ public static class Generator {
 	public static void AddPath(Vector3 path)
 	{
 		pathLocations.Add (path);
+	}
+
+	public static void ClearPaths()
+	{
+		pathLocations.Clear();
 	}
 
 	interface ChunkGenerator 

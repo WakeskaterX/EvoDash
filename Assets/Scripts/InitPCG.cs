@@ -29,6 +29,7 @@ public class InitPCG : MonoBehaviour {
 			}
 			Instantiate (spikes,new Vector3( curLocation.x, curLocation.y-2, 0f), Quaternion.identity);
 		}*/
+		Generator.numberGenerated = 0;
 		Generator.player = player;
 		Generator.spikes = spikes;
 		Generator.ground = ground;
@@ -41,6 +42,7 @@ public class InitPCG : MonoBehaviour {
 		nTrigger.GetComponent<MakeNextChunk> ().startLocation = curLocation;
 		nTrigger.GetComponent<MakeNextChunk> ().player = player;
 		*/
+		Generator.ClearPaths();
 		Generator.AddPath (curLocation);
 	}
 	
