@@ -11,7 +11,7 @@ public class EnemyGroundControl : MonoBehaviour {
 	public Transform edge_check;
 
 	void Start () {
-	
+	  
 	}
 	
 

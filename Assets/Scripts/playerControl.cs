@@ -63,6 +63,8 @@ public class playerControl : MonoBehaviour {
 	public Transform wall_check_left;
 	public Transform wall_check_right;
 
+	public Vector3 last_check;
+
 	public int	wall_side			= 0;
 
 	public LayerMask is_ground;
@@ -85,6 +87,12 @@ public class playerControl : MonoBehaviour {
 	public float death_timer		= 0f;
 	public float death_wait			= 1f;
 
+	public AudioClip  snd_jump;
+	public AudioClip  snd_dash;
+	public AudioClip snd_game_over;
+	public AudioClip snd_land;
+	public AudioClip snd_wall_slide;
+
 	Animator anim;
 
 
@@ -106,6 +114,7 @@ public class playerControl : MonoBehaviour {
 
 	void Start () {
 		anim = GetComponent<Animator>();
+		last_check = transform.position;
 	}
 
 	void Update(){
@@ -145,6 +154,8 @@ public class playerControl : MonoBehaviour {
 		if (Time.time > death_timer && !can_die){
 			can_die = true;
 		}
+
+		if (transform.position.y < -100) PlayerKill ();
 	}
 
 	void FixedUpdate () {
@@ -185,11 +196,12 @@ public class playerControl : MonoBehaviour {
 	}
 
 	void GameOver(){
-		Application.LoadLevel(Application.loadedLevel);
+		AudioSource.PlayClipAtPoint(snd_game_over,transform.position);
+		Application.LoadLevel("Title");
 	}
 	
 	void Respawn(){
-		transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width/4,Screen.height/2,20f));
+		transform.position = last_check;
 		death_timer = Time.time + death_wait;
 	}
 
@@ -235,7 +247,10 @@ public class playerControl : MonoBehaviour {
 			{
 				rigidbody2D.velocity = new Vector2(0f,wall_slide_speed);
 			}
-		} else wall_side = 0;
+		} else {
+			wall_side = 0;
+
+		}
 
 
 		anim.SetBool ("wallGrab", wallgrabbing);
@@ -267,7 +282,7 @@ public class playerControl : MonoBehaviour {
 
 	void MoveDash(){
 	if ((grounded || can_airdash) && !stunned){
-
+			/*
 		if (!tap_right && Input.GetAxis ("Horizontal") > 0 && tap_last == 0) {
 			tap_time = Time.time + tap_cool;
 			tap_right = true;
@@ -304,7 +319,7 @@ public class playerControl : MonoBehaviour {
 			rigidbody2D.gravityScale = 0f;
 			can_dash = false;
 			//Debug.Log("dash left");
-		}
+		}*/
 		//Secondary Dashing button
 			if (Input.GetButton("Dash") && !dashing && can_dash)
 			{
@@ -332,6 +347,7 @@ public class playerControl : MonoBehaviour {
 					rigidbody2D.gravityScale = 0f;
 					can_dash = false;
 				}
+				AudioSource.PlayClipAtPoint(snd_dash,transform.position);
 			}
 		
 		
@@ -376,6 +392,7 @@ public class playerControl : MonoBehaviour {
 
 		//Dampen Move Speed
 		if (grounded){
+			if (Vector3.Distance(transform.position,last_check) > 10f) last_check = transform.position;
 			velX = Mathf.Sign (rigidbody2D.velocity.x) * (Mathf.Max (Mathf.Abs (rigidbody2D.velocity.x) - decel_force, 0));
 			rigidbody2D.velocity = new Vector2 (velX, rigidbody2D.velocity.y);
 		} else 

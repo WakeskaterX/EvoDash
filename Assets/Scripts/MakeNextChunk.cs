@@ -11,6 +11,7 @@ public class MakeNextChunk : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		gameObject.renderer.enabled = false;
 	}
 
 	void Awake() {
@@ -51,6 +52,6 @@ public class MakeNextChunk : MonoBehaviour {
 		*/
 		Generator.MakeChunk (data, platform, nextTrigger);
 		madeNextChunk = true;
-		gameObject.GetComponent<SpriteRenderer> ().color = new Color (0, 0, 255);
+		//gameObject.GetComponent<SpriteRenderer> ().color = new Color (0, 0, 255);
 	}
 }
