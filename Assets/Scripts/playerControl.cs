@@ -152,7 +152,7 @@ public class playerControl : MonoBehaviour {
 	}
 
 	void OnGUI(){
-		DevInfoGraphics();
+		//DevInfoGraphics();
 	}
 
 	void EndureRegen(){
@@ -229,6 +229,7 @@ public class playerControl : MonoBehaviour {
 
 	void MoveDash(){
 	if ((grounded || can_airdash) && !stunned){
+
 		if (!tap_right && Input.GetAxis ("Horizontal") > 0 && tap_last == 0) {
 			tap_time = Time.time + tap_cool;
 			tap_right = true;
@@ -265,7 +266,38 @@ public class playerControl : MonoBehaviour {
 			rigidbody2D.gravityScale = 0f;
 			can_dash = false;
 			//Debug.Log("dash left");
-		}}
+		}
+		//Secondary Dashing button
+			if (Input.GetButton("Dash") && !dashing && can_dash)
+			{
+				Debug.Log ("Tryig to dash");
+				if (facing_right){
+					dashing = true;
+					endure -= dash_cost;
+					dash_cool -= dash_cool_inc;
+					dash_len += dash_len_inc;
+					data.PlayerDashed();
+					rigidbody2D.velocity = new Vector2 (dash_speed,0);
+					dash_time = Time.time + dash_len;
+					dash_cool_time = Time.time + dash_cool;
+					rigidbody2D.gravityScale = 0f;
+					can_dash = false;
+				} else{
+					dashing = true;
+					endure -= dash_cost;
+					dash_cool -= dash_cool_inc;
+					data.PlayerDashed();
+					rigidbody2D.velocity = new Vector2 (-dash_speed,0);
+					dash_time = Time.time + dash_len;
+					dash_cool_time = Time.time + dash_cool;
+					dash_len += dash_len_inc;
+					rigidbody2D.gravityScale = 0f;
+					can_dash = false;
+				}
+			}
+		
+		
+		}
 
 		if(Time.time > tap_time) {
 			tap_left = false;
@@ -374,12 +406,12 @@ public class playerControl : MonoBehaviour {
 		anim.SetBool ("grounded",grounded);
 	}
 
-	void DevInfoGraphics(){
+	void DevInfoGraphics(){/*
 		GUI.contentColor = Color.black;
 		GUI.Label(new Rect(10,30,200,20),"Speed: "+speed_top);
 		GUI.Label(new Rect(10,60,200,20),"Jump: "+jump_force);
 		GUI.Label(new Rect(10,90,200,20),"Dash CD: "+dash_cool);
 		GUI.Label(new Rect(10,120,200,20),"Dash Len: "+dash_len);
-		GUI.Label(new Rect(10,150,200,20),"End Regen: "+endure_regen);
+		GUI.Label(new Rect(10,150,200,20),"End Regen: "+endure_regen);*/
 	}
 }
