@@ -52,6 +52,7 @@ public class GuiHud : MonoBehaviour {
 		} else GUI.DrawTexture(new Rect(100f,30f,30f,30f),nodash_tex);
 
 		curr_time = Mathf.Floor (Time.time - start_time);
+		player.GetComponent<playerControl>().gametimer = (int)curr_time;
 		GUI.color = Color.black;
 		GUI.Label (new Rect(Screen.width-50f,20f,40f,20f),curr_time.ToString());
 

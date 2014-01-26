@@ -87,6 +87,8 @@ public class playerControl : MonoBehaviour {
 	public float death_timer		= 0f;
 	public float death_wait			= 1f;
 
+	public int gametimer			= 0;
+
 	public AudioClip  snd_jump;
 	public AudioClip  snd_dash;
 	public AudioClip snd_game_over;
@@ -197,7 +199,9 @@ public class playerControl : MonoBehaviour {
 
 	void GameOver(){
 		AudioSource.PlayClipAtPoint(snd_game_over,transform.position);
-		Application.LoadLevel("Title");
+		ScoreHold.max_dist = transform.position.x;
+		ScoreHold.life_time = gametimer;
+		Application.LoadLevel("EndScene");
 	}
 	
 	void Respawn(){

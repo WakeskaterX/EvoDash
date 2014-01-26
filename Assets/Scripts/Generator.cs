@@ -17,11 +17,15 @@ public static class Generator {
 
 	public static void MakeChunk(PlayerDataCapsule data, GameObject platform, GameObject trigger)
 	{
-		int rand = Random.Range(0,2);
+		int rand = Random.Range(0,3);
 		if (rand == 1)
 			new BasicGenerator ().GenerateChunk (data, platform, trigger);
-		else
+		else if (rand == 0)
 			new ScatterGenerator().GenerateChunk (data,platform,trigger);
+		else 
+			new FlatGenerator().GenerateChunk(data,platform,trigger);
+
+		numberGenerated++;
 	}
 
 	public static void AddPath(Vector3 path)
@@ -29,9 +33,8 @@ public static class Generator {
 		pathLocations.Add (path);
 	}
 
-	public static void ClearPaths()
-	{
-		pathLocations.Clear();
+	public static void ClearPaths(){
+		pathLocations.Clear ();
 	}
 
 	interface ChunkGenerator 
@@ -103,8 +106,6 @@ public static class Generator {
 			newTrigger.GetComponent<MakeNextChunk>().player = player;
 			newTrigger.transform.localScale = new Vector3(100, 1, 1);
 			pathLocations = newPaths;
-			Debug.Log (pathLocations.ToString ());
-			numberGenerated++;
 		}
 	}
 
@@ -190,8 +191,64 @@ public static class Generator {
 			newTrigger.GetComponent<MakeNextChunk>().player = player;
 			newTrigger.transform.localScale = new Vector3(1000, 1, 1);
 			pathLocations = newPaths;
-			Debug.Log (pathLocations.ToString ());
-			numberGenerated++;
+
+		}
+	}
+
+	class FlatGenerator : ChunkGenerator
+	{
+		public void GenerateChunk(PlayerDataCapsule data, GameObject platform, GameObject trigger)
+		{
+			List<Vector3> newPaths = new List<Vector3> ();
+			foreach(Vector3 path in pathLocations)
+			{
+				float genLocation = path.x;
+				float end = genLocation+chunkWidth;
+				float platY = path.y ;
+				float oldY = platY;
+				float platformWidth = platform.GetComponent<BoxCollider2D>().size.x;
+				float lowestYInPath = path.y;
+				float highestYInPath = path.y;
+
+				GameObject bigPlat = (GameObject) Object.Instantiate(platform, new Vector3(genLocation+chunkWidth/2, path.y), Quaternion.identity);
+				bigPlat.transform.localScale = new Vector3(chunkWidth/platformWidth, 1, 1);
+				while (genLocation < end)
+				{
+					genLocation+=Random.Range (data.curRunSpeed/2*3, data.curRunSpeed*3);
+					float height = Random.Range(0, data.curJumpHeight/2-1);
+					if (data.numberDashes > 5 && Random.Range (0, 2) == 0)
+					{
+						GameObject top = (GameObject) Object.Instantiate(platform, new Vector3(genLocation, path.y + 6 + height), Quaternion.identity);
+						top.transform.Rotate (new Vector3(0, 0, 1), 90);
+						top.transform.localScale = new Vector3(10/platformWidth, 1, 1);
+						GameObject bottom = (GameObject) Object.Instantiate(platform, new Vector3(genLocation, path.y - 5 + height + Mathf.Min (0.5f, numberGenerated/10f)), Quaternion.identity);
+						bottom.transform.Rotate (new Vector3(0, 0, 1), 90);
+						bottom.transform.localScale = new Vector3(10/platformWidth, 1, 1);
+					}
+					else {
+						GameObject wallPlat = (GameObject) Object.Instantiate(platform, new Vector3(genLocation, path.y + height/2), Quaternion.identity);
+						wallPlat.transform.Rotate (new Vector3(0, 0, 1), 90);
+						wallPlat.transform.localScale = new Vector3(height, 1, 1);
+					}
+				}
+				genLocation -= chunkWidth;
+				while ( genLocation < end)
+				{
+					genLocation+= Random.Range (2, Mathf.Max (1, 10 - numberGenerated));
+					int rand = Random.Range (0, numberGenerated+2);
+					if (rand < 2) { }
+					else if (rand < 5)
+						Object.Instantiate(ground, new Vector3(genLocation, path.y + 0.5f), Quaternion.identity);
+					else
+						Object.Instantiate(air, new Vector3(genLocation, path.y + 0.75f), Quaternion.identity);
+				}
+
+				newPaths.Add(new Vector3(end, platY));
+			}
+			GameObject newTrigger = (GameObject) Object.Instantiate(trigger, new Vector3(newPaths[0].x - chunkWidth/2, newPaths[0].y), trigger.transform.rotation);
+			newTrigger.GetComponent<MakeNextChunk>().player = player;
+			newTrigger.transform.localScale = new Vector3(100, 1, 1);
+			pathLocations = newPaths;
 		}
 	}
 }

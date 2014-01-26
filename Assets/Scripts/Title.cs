@@ -6,12 +6,15 @@ public class Title : MonoBehaviour {
 	public Texture main_tex;
 	// Use this for initialization
 	void Start () {
-	
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if(Input.GetButton ("Enter")) Application.LoadLevel ("Level_One");
+		if(Input.GetButton ("Enter")) {
+			ScoreHold.max_dist = 0;
+			ScoreHold.life_time = 0;
+			Application.LoadLevel ("Level_One");
+		}
 	}
 
 	void OnGUI(){
