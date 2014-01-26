@@ -17,8 +17,11 @@ public static class Generator {
 
 	public static void MakeChunk(PlayerDataCapsule data, GameObject platform, GameObject trigger)
 	{
-		//new BasicGenerator ().GenerateChunk (data, platform, trigger);
-		new ScatterGenerator().GenerateChunk (data,platform,trigger);
+		int rand = Random.Range(0,2);
+		if (rand == 1)
+			new BasicGenerator ().GenerateChunk (data, platform, trigger);
+		else
+			new ScatterGenerator().GenerateChunk (data,platform,trigger);
 	}
 
 	public static void AddPath(Vector3 path)
@@ -58,15 +61,17 @@ public static class Generator {
 					newPlat = (GameObject) Object.Instantiate(platform, new Vector3(genLocation-platformWidth*scale, (platY+oldY)/2), platform.transform.rotation);
 					newPlat.transform.Rotate(new Vector3(0, 0, 1), 90);
 					newPlat.transform.localScale = new Vector3(vertScale, 1, 1);
-					if (Random.Range(3, numberGenerated+3) > numberGenerated) 
+					if (Random.Range(0, numberGenerated*2) > 1+numberGenerated) 
 					{
-						int rando = Random.Range (0, 1+numberGenerated);
-						if (rando < 2)
-							Object.Instantiate(ground, new Vector3(genLocation-platformWidth*scale/2, (platY + 1f)), Quaternion.identity);
-						else if (rando <  5)
-							Object.Instantiate(air, new Vector3(genLocation-platformWidth*scale/2, (platY + 1f)), Quaternion.identity);
-						else
-							Object.Instantiate(ghost, new Vector3(genLocation-platformWidth*scale/2, (platY + 1f)), Quaternion.identity);
+						int rando = Random.Range (0, 100);
+						if (rando > 100 - Mathf.Min (numberGenerated,10f)){
+							Object.Instantiate(ground, new Vector3(genLocation-platformWidth*scale/2, (platY + 3f)), Quaternion.identity);
+						}else if (rando > 100 - Mathf.Min (numberGenerated*3.5f,35f))
+						{
+							GameObject enFly;
+							enFly = Object.Instantiate(air, new Vector3(genLocation-platformWidth*scale/2, (platY + 3f)), Quaternion.identity) as GameObject;
+							enFly.GetComponent<EnemyFlying>().player = player; 
+						}
 					}
 					oldY = platY;
 					if (platY < lowestYInPath)

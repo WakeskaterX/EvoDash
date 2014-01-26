@@ -9,8 +9,8 @@ public class GuiHud : MonoBehaviour {
 	public playerControl pCont;
 	public GameObject player;
 	public int num_ghosts;
-	public int counter						= 0;
-	public float count_time					= 0f;
+	public float curr_time					= 0f;
+	public float start_time					= 0f;
 
 	public Texture border_tex;
 	public Texture bar_tex;
@@ -21,10 +21,11 @@ public class GuiHud : MonoBehaviour {
 
 	void Start () {
 		pCont = player.GetComponent<playerControl>();
+		start_time = Time.time;
 	}
 	void Update () { 
-		count_time += 1f;
 
+		if (Input.GetButton ("Exit")){Application.Quit();}
 	}
 
 	void OnGUI() {
@@ -50,9 +51,9 @@ public class GuiHud : MonoBehaviour {
 			GUI.DrawTexture(new Rect(100f,30f,30f,30f),dash_tex);
 		} else GUI.DrawTexture(new Rect(100f,30f,30f,30f),nodash_tex);
 
-		counter = Mathf.FloorToInt(count_time * Time.deltaTime);
+		curr_time = Mathf.Floor (Time.time - start_time);
 		GUI.color = Color.black;
-		GUI.Label (new Rect(Screen.width-50f,20f,40f,20f),counter.ToString());
+		GUI.Label (new Rect(Screen.width-50f,20f,40f,20f),curr_time.ToString());
 
 		//GUI.Box (new Rect(5f,5f,10f,12f),"BOX");
 	}
