@@ -6,6 +6,11 @@ public class InitPCG : MonoBehaviour {
 	public GameObject platform;
 	public GameObject nextTrigger;
 	public GameObject player;
+	public GameObject spikes;
+	public GameObject ground;
+	public GameObject air;
+	public GameObject ghost;
+
 
 	// Use this for initialization
 	void Start () {
@@ -22,12 +27,19 @@ public class InitPCG : MonoBehaviour {
 				triggerLoc = curLocation;
 				triggerLoc.y += 2f;
 			}
+			Instantiate (spikes,new Vector3( curLocation.x, curLocation.y-2, 0f), Quaternion.identity);
 		}
+		Generator.player = player;
+		Generator.spikes = spikes;
+		Generator.ground = ground;
+		Generator.air = air;
+		Generator.ghost = ghost;
 		GameObject nTrigger = (GameObject) Instantiate (nextTrigger, triggerLoc, gameObject.transform.rotation);
 		nTrigger.GetComponent<MakeNextChunk> ().platform = platform;
 		nTrigger.GetComponent<MakeNextChunk> ().nextTrigger = nextTrigger;
 		nTrigger.GetComponent<MakeNextChunk> ().startLocation = curLocation;
 		nTrigger.GetComponent<MakeNextChunk> ().player = player;
+		Generator.AddPath (curLocation);
 	}
 	
 	// Update is called once per frame

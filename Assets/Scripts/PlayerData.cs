@@ -59,7 +59,7 @@ public class PlayerData {
 		return data;
 	}
 
-	public string ToString()
+	public override string ToString()
 	{
 		return "Jumps: " + numberJumps +
 						"\nDashes: " + numberDashes +
