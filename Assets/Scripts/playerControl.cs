@@ -408,7 +408,7 @@ public class playerControl : MonoBehaviour {
 		
 		if (Mathf.Abs(rigidbody2D.velocity.x) > (speed_top * sprint_mult)){ 
 			rigidbody2D.velocity = new Vector2(Mathf.Sign (rigidbody2D.velocity.x) * (speed_top * sprint_mult), rigidbody2D.velocity.y);
-			Debug.Log ("Top Speed reached!");
+			//Debug.Log ("Top Speed reached!");
 		}
 	}
 

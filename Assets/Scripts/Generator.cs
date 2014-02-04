@@ -64,11 +64,13 @@ public static class Generator {
 					platY += Random.Range(-1, (int)Mathf.Floor(data.curJumpHeight*10)/20);
 					GameObject newPlat = (GameObject) Object.Instantiate(platform, new Vector3(genLocation, platY), Quaternion.identity);
 					newPlat.transform.localScale = new Vector3(scale, 1, 1);
+					newPlat.GetComponent<PlatformDestruction>().player = player;
 					genLocation+=platformWidth*scale/2;
 					float vertScale = Mathf.Abs (platY - oldY);
 					newPlat = (GameObject) Object.Instantiate(platform, new Vector3(genLocation-platformWidth*scale, (platY+oldY)/2), platform.transform.rotation);
 					newPlat.transform.Rotate(new Vector3(0, 0, 1), 90);
 					newPlat.transform.localScale = new Vector3(vertScale, 1, 1);
+					newPlat.GetComponent<PlatformDestruction>().player = player;
 					if (Random.Range(0, numberGenerated*2) > 1+numberGenerated) 
 					{
 						int rando = Random.Range (0, 100);
@@ -212,6 +214,7 @@ public static class Generator {
 
 				GameObject bigPlat = (GameObject) Object.Instantiate(platform, new Vector3(genLocation+chunkWidth/2, path.y), Quaternion.identity);
 				bigPlat.transform.localScale = new Vector3(chunkWidth/platformWidth, 1, 1);
+				bigPlat.GetComponent<PlatformDestruction>().player = player;
 				while (genLocation < end)
 				{
 					genLocation+=Random.Range (data.curRunSpeed/2*3, data.curRunSpeed*3);
@@ -221,14 +224,17 @@ public static class Generator {
 						GameObject top = (GameObject) Object.Instantiate(platform, new Vector3(genLocation, path.y + 6 + height), Quaternion.identity);
 						top.transform.Rotate (new Vector3(0, 0, 1), 90);
 						top.transform.localScale = new Vector3(10/platformWidth, 1, 1);
+						top.GetComponent<PlatformDestruction>().player = player;
 						GameObject bottom = (GameObject) Object.Instantiate(platform, new Vector3(genLocation, path.y - 5 + height + Mathf.Min (.2f, numberGenerated/10f)), Quaternion.identity);
 						bottom.transform.Rotate (new Vector3(0, 0, 1), 90);
 						bottom.transform.localScale = new Vector3(10/platformWidth, 1, 1);
+						bottom.GetComponent<PlatformDestruction>().player = player;
 					}
 					else {
 						GameObject wallPlat = (GameObject) Object.Instantiate(platform, new Vector3(genLocation, path.y + height/2), Quaternion.identity);
 						wallPlat.transform.Rotate (new Vector3(0, 0, 1), 90);
 						wallPlat.transform.localScale = new Vector3(height, 1, 1);
+						wallPlat.GetComponent<PlatformDestruction>().player = player;
 					}
 				}
 				genLocation -= chunkWidth;

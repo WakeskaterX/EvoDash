@@ -19,26 +19,26 @@ public class EnemyGroundControl : MonoBehaviour {
 
 	void Update () {
 		if (facing_right){
-			Debug.Log ("R");
+			//Debug.Log ("R");
 			rigidbody2D.AddForce(Vector2.right * en_speed / Time.deltaTime);
 			//rigidbody2D.velocity = new Vector2(en_speed / Time.deltaTime, rigidbody2D.velocity.y);
 
 		} else{
-			Debug.Log ("L");
+			//Debug.Log ("L");
 			rigidbody2D.AddForce(Vector2.right * -en_speed / Time.deltaTime);
 			//rigidbody2D.velocity = new Vector2(-en_speed / Time.deltaTime, rigidbody2D.velocity.y);
 		}
 
 		if (!Physics2D.Linecast (transform.position,edge_check.transform.position,1 << LayerMask.NameToLayer ("Platform")))
 		{
-			Debug.Log ("Swap!");
+			//Debug.Log ("Swap!");
 			//Debug.Log (Physics2D.Linecast (transform.position,edge_check.transform.position,1 << LayerMask.NameToLayer ("Platform")));
 			Flip();
 		}
 
 		if (Physics2D.Linecast (transform.position,new Vector3(transform.position.x + (Mathf.Sign(transform.localScale.x) * .7f),transform.position.y,0), 1 << LayerMask.NameToLayer ("Platform")))
 		{
-			Debug.Log ("Swap");
+			//Debug.Log ("Swap");
 			Flip();
 		}
 

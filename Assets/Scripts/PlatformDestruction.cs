@@ -7,7 +7,8 @@ public class PlatformDestruction : MonoBehaviour {
 	public float dist_to_destroy		= 25f;
 	// Use this for initialization
 	void Start () {
-		if (player == null) player = GameObject.FindWithTag ("Player");
+		if (player == null) GameObject.FindGameObjectWithTag ("Player");
+		
 	}
 	
 	// Update is called once per frame
