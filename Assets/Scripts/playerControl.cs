@@ -327,7 +327,7 @@ public class playerControl : MonoBehaviour {
 		//Secondary Dashing button
 			if (Input.GetButton("Dash") && !dashing && can_dash)
 			{
-				Debug.Log ("Tryig to dash");
+				//Debug.Log ("Tryig to dash");
 				if (facing_right){
 					dashing = true;
 					endure -= dash_cost;

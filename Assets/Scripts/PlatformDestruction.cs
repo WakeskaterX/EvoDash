@@ -15,7 +15,7 @@ public class PlatformDestruction : MonoBehaviour {
 	void Update () {
 		if ((player.transform.position.x - transform.position.x) > dist_to_destroy)
 		{
-			Debug.Log ("Destroyed a Platform");
+			//Debug.Log ("Destroyed a Platform");
 			Destroy(this.gameObject);
 		}
 	}
