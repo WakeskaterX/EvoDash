@@ -35,7 +35,7 @@ public static class Generator {
 			int[,] roomGen = new int[32,32];
 			Vector3 platScale = new Vector3(0,0,0);
 			int tValFloor = 40;
-			int tValSpace = 10;
+			int tValSpace = 15;
 			
 			
 			//Create the basic grid room here
@@ -50,13 +50,13 @@ public static class Generator {
 				else{
 					if (roomGen[i-1,j] == 1)
 					{
-						if (BuildNoPlat(i,j,ref roomGen, tValSpace)){
+						if (BuildNoPlat(i,j,roomGen, tValSpace)){
 							roomGen[i,j] = 0;
 						} else {
 							roomGen[i,j] = 1;
 						}
 					} else {
-						if (BuildAPlat(i,j,ref roomGen,tValFloor)){
+						if (BuildAPlat(i,j,roomGen,tValFloor)){
 							roomGen[i,j] = 1;
 						} else {
 							roomGen[i,j] = 0;
@@ -65,7 +65,7 @@ public static class Generator {
 				}}else{
 				//create jumping platforms
 				
-				
+				roomGen[i,j] = 0;
 				
 				}
 			}}
@@ -76,7 +76,7 @@ public static class Generator {
 				spk.GetComponent<PlatformDestruction>().player = player;
 			}
 			//Create blocks from grid room
-			CreateBlocks(ref roomGen, platform, player, startLoc);
+			CreateBlocks(roomGen, platform, player, startLoc);
 
 			//CREATE TEST FLOOR
 			//GameObject plat = GameObject.Instantiate(platform,new Vector3(startLoc.x + 8,startLoc.y,0), Quaternion.identity) as GameObject;
@@ -93,7 +93,7 @@ public static class Generator {
 		
 		}
 		//take the previous block amounts and determine if there should be a space or not
-		bool BuildNoPlat(int i, int j, ref int[,] roomGen, int tValSpace){
+		bool BuildNoPlat(int i, int j, int[,] roomGen, int tValSpace){
 			
 			float chance 	= 0f;
 			int num 		= 0;
@@ -103,13 +103,13 @@ public static class Generator {
 			} 
 			chance = tValSpace * num;
 			
-			if (Random.Range(0f,100f) < chance){
+			if (Random.Range(0f,100f) <= chance){
 				return true;
 			} else return false;
 		}
 		
 		//take the previous spaces and determine if we should build a platform
-		bool BuildAPlat(int i, int j, ref int[,] roomGen, int tValFloor){
+		bool BuildAPlat(int i, int j, int[,] roomGen, int tValFloor){
 			float chance 	= 0f;
 			int num 		= 0;
 			for (int t = i-1; t >= 0 && roomGen[t,j] != 0; t--)
@@ -118,16 +118,16 @@ public static class Generator {
 			} 
 			chance = tValFloor * num;
 			
-			if (Random.Range(0f,100f) < chance){
+			if (Random.Range(0f,100f) <= chance){
 				return true;
 			} else return false;
 		}
 		
 		
 		
-		void CreateBlocks(ref int[,] roomGen, GameObject platform, GameObject player, Vector3 startLoc){
+		void CreateBlocks(int[,] roomGen, GameObject platform, GameObject player, Vector3 startLoc){
 			GameObject plat;
-			for (int jj = 0; jj < 1; jj++){
+			for (int jj = 0; jj < 31; jj++){
 			for (int ii = 0; ii < 31; ii++){
 				if (roomGen[ii,jj] == 1){
 					plat = GameObject.Instantiate(platform,new Vector3(startLoc.x + (.5f * ii), startLoc.y + (.5f * jj), 0),Quaternion.identity) as GameObject;	
