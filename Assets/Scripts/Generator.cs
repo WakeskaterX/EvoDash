@@ -34,13 +34,13 @@ public static class Generator {
 		{
 			int[,] roomGen = new int[32,32];
 			Vector3 platScale = new Vector3(0,0,0);
-			int tValFloor = 40;
-			int tValSpace = 15;
+			int tValFloor = 25;
+			int tValSpace = 5;
 			
 			
 			//Create the basic grid room here
 			//start at 0 and stay at 0 but go to 31 for J later for entire grid.  Grid starts at 0,0 at startLoc
-			for (int j = 0; j < 01; j++){
+			for (int j = 0; j < 32; j++){
 			for (int i = 0; i < 32; i++){
 				//create base row
 				if (j == 0){
@@ -69,6 +69,8 @@ public static class Generator {
 				
 				}
 			}}
+			
+			DebugRoomGen(roomGen);
 
 			//Create new spikes
 			for (int i = 0; i < 8; i ++){
@@ -97,11 +99,14 @@ public static class Generator {
 			
 			float chance 	= 0f;
 			int num 		= 0;
-			for (int t = i-1; t >= 0 && roomGen[t,j] != 1; t--)
+			for (int t = i-1; t >= 0; t--)
 			{
-				num ++;
+				if (roomGen[t,j] == 1){
+					num ++;
+				} else break;
 			} 
 			chance = tValSpace * num;
+			Debug.Log ("Chance: "+chance);
 			
 			if (Random.Range(0f,100f) <= chance){
 				return true;
@@ -112,9 +117,11 @@ public static class Generator {
 		bool BuildAPlat(int i, int j, int[,] roomGen, int tValFloor){
 			float chance 	= 0f;
 			int num 		= 0;
-			for (int t = i-1; t >= 0 && roomGen[t,j] != 0; t--)
+			for (int t = i-1; t >= 0; t--)
 			{
-				num ++;
+				if (roomGen[t,j] == 0){
+					num ++;
+				} else break;
 			} 
 			chance = tValFloor * num;
 			
@@ -127,13 +134,27 @@ public static class Generator {
 		
 		void CreateBlocks(int[,] roomGen, GameObject platform, GameObject player, Vector3 startLoc){
 			GameObject plat;
-			for (int jj = 0; jj < 31; jj++){
-			for (int ii = 0; ii < 31; ii++){
+			for (int jj = 0; jj < 32; jj++){
+			for (int ii = 0; ii < 32; ii++){
 				if (roomGen[ii,jj] == 1){
 					plat = GameObject.Instantiate(platform,new Vector3(startLoc.x + (.5f * ii), startLoc.y + (.5f * jj), 0),Quaternion.identity) as GameObject;	
 					plat.GetComponent<PlatformDestruction>().player = player;
 				}
 			}}
+		}
+		
+		
+		void DebugRoomGen(int[,] roomGen){
+			string strDebug = "Debug Int[,]: ";
+			for (int yy = 0; yy < 32; yy++){
+			    strDebug += "}/r/n Row " + yy + ": { ";
+			    
+				for (int xx = 0; xx < 32; xx++){
+					strDebug += roomGen[xx,yy]+", ";
+				}
+			}
+			
+			Debug.Log (strDebug);
 		}
 	}
 	
