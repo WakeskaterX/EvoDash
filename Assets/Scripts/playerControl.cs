@@ -5,7 +5,7 @@ public class playerControl : MonoBehaviour {
 
 	public float speed_min			= 2f;
 	public float speed_max			= 6f;
-	public float speed_curr			= 1f;
+	public float speed_curr			= 2f;
 	public float speed_top			= 2f;								//current top speed available
 	public float sprint_mult		= 1f;								//multiplies the speed_top
 	public float sprint_max			= 1.8f;
@@ -101,14 +101,14 @@ public class playerControl : MonoBehaviour {
 	/************  Statistic Adjustment Variables  ************/
 	public float speed_decay		= .1f;								//decay in seconds
 	public float speed_inc			= .3f;								//time sprinting in seconds
-	public float jump_decay			= .1f;
-	public float jump_inc			= .5f;
+	public float jump_decay			= .2f;
+	public float jump_inc			= .4f;
 	public float dash_cool_decay	= .05f;
 	public float dash_cool_inc		= .3f;
 	public float end_reg_decay		= .02f;
 	public float end_reg_inc		= .03f;
 	public float dash_len_decay		= .03f;
-	public float dash_len_inc		= .08f;
+	public float dash_len_inc		= .09f;
 
 
 
@@ -261,20 +261,41 @@ public class playerControl : MonoBehaviour {
 	}
 
 	void DecayValues(){
-		speed_top -= speed_decay * Time.deltaTime;
-		if (speed_top < speed_min) speed_top = speed_min;
-
-		jump_force -= jump_decay * Time.deltaTime;
-		if (jump_force < jump_force_min) jump_force = jump_force_min;
-
-		dash_cool += dash_cool_decay * Time.deltaTime;
-		if (dash_cool > dash_cool_max) dash_cool = dash_cool_max;
-
-		endure_regen -= end_reg_decay * Time.deltaTime;
-		if (endure_regen < endure_regen_min) endure_regen = endure_regen_min;
-
-		dash_len -= dash_len_decay * Time.deltaTime;
-		if (dash_len < dash_len_min) dash_len = dash_len_min;
+		
+		if (!stunned){
+			speed_top -= speed_decay * Time.deltaTime;
+			if (speed_top < speed_min) speed_top = speed_min;
+	
+			jump_force -= jump_decay * Time.deltaTime;
+			if (jump_force < jump_force_min) jump_force = jump_force_min;
+	
+			dash_cool += dash_cool_decay * Time.deltaTime;
+			if (dash_cool > dash_cool_max) dash_cool = dash_cool_max;
+	
+			endure_regen -= end_reg_decay * Time.deltaTime;
+			if (endure_regen < endure_regen_min) endure_regen = endure_regen_min;
+	
+			dash_len -= dash_len_decay * Time.deltaTime;
+			if (dash_len < dash_len_min) dash_len = dash_len_min;
+		}
+		else
+		{
+			speed_top -= speed_decay * Time.deltaTime * 2;
+			if (speed_top < speed_min) speed_top = speed_min;
+			
+			jump_force -= jump_decay * Time.deltaTime * 2;
+			if (jump_force < jump_force_min) jump_force = jump_force_min;
+			
+			dash_cool += dash_cool_decay * Time.deltaTime * 2;
+			if (dash_cool > dash_cool_max) dash_cool = dash_cool_max;
+			
+			endure_regen -= end_reg_decay * Time.deltaTime * 2;
+			if (endure_regen < endure_regen_min) endure_regen = endure_regen_min;
+			
+			dash_len -= dash_len_decay * Time.deltaTime * 2;
+			if (dash_len < dash_len_min) dash_len = dash_len_min;
+		
+		}
 	}
 	void CapValues(){
 		speed_top = Mathf.Min(speed_top,speed_max);
@@ -424,18 +445,18 @@ public class playerControl : MonoBehaviour {
 				can_jump = true;
 			}
 
-			if (grounded && jump && can_jump && !stunned){
+			if (grounded && jump && can_jump){
 			//rigidbody2D.AddForce(Vector2.up * jump_force * jForce);
 				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x,jump_force * jForce );
 				endure -= jump_cost;
 				jump_force += jump_inc;
-			grounded = false;
+				grounded = false;
 			if (!can_dub_jump) can_jump = false;
 			}
 		else
 			if (!grounded && jump && can_jump && !stunned){
 				can_jump = false;
-				jump_force += jump_inc;
+				jump_force += jump_inc * .75f;
 				endure -= dub_jump_cost;
 				//rigidbody2D.AddForce(Vector2.up * jump_force * jForce);
 				rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x,jump_force * jForce );
@@ -456,7 +477,7 @@ public class playerControl : MonoBehaviour {
 				jump_force += jump_inc;
 				//rigidbody2D.velocity = jVect * jump_force * jFWall ;
 				rigidbody2D.AddForce (jVect * jump_force * jFWall);
-				Debug.Log (rigidbody2D.velocity);
+				//Debug.Log (rigidbody2D.velocity);
 
 				if (!can_dub_jump)	can_jump = false;
 			}

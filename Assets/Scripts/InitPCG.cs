@@ -4,12 +4,14 @@ using System.Collections;
 public class InitPCG : MonoBehaviour {
 
 	public GameObject platform;
+	public GameObject platRamp;
 	public GameObject nextTrigger;
 	public GameObject player;
 	public GameObject spikes;
 	public GameObject ground;
 	public GameObject air;
 	public GameObject ghost;
+	public GameObject smallSpike;
 
 
 	// Use this for initialization
@@ -61,7 +63,7 @@ public class InitPCG : MonoBehaviour {
 		Generator.spikes = spikes;
 		Generator.ground = ground;
 		Generator.air = air;
-		Generator.ghost = ghost;
+		Generator.smallSpike = smallSpike;
 
 		Generator.roomLocation = new Vector3(8f,0f,0f);
 

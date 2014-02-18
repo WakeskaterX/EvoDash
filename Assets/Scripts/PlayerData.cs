@@ -20,7 +20,7 @@ public class PlayerData {
 
 	public void PlayerJumped() { 
 		numberJumps++; 
-		Debug.Log ("Added jump!");
+		//Debug.Log ("Added jump!");
 	}
 	public void PlayerDashed() { numberDashes++; }
 	public void PlayerCurrentStats(float jump, float dash, float run)

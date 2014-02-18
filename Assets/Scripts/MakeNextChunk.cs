@@ -4,6 +4,7 @@ using System.Collections;
 public class MakeNextChunk : MonoBehaviour {
 
 	public GameObject platform;
+	public GameObject platRamp;
 	public GameObject nextTrigger;
 	public GameObject player;
 	public bool madeNextChunk = false;
@@ -50,7 +51,7 @@ public class MakeNextChunk : MonoBehaviour {
 		nTrigger.GetComponent<MakeNextChunk> ().startLocation = curLocation;
 		nTrigger.GetComponent<MakeNextChunk> ().player = player;
 		*/
-		Generator.MakeChunk (data, platform, nextTrigger, player);
+		Generator.MakeChunk (data, platform, platRamp, nextTrigger, player);
 		madeNextChunk = true;
 		gameObject.GetComponent<SpriteRenderer> ().color = new Color (0, 0, 255);
 	}
